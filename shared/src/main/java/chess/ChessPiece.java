@@ -53,7 +53,7 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> possibleMoves = new ArrayList<>();
+        Collection<ChessMove> possibleMoves = new ArrayList<ChessMove>();
         if(this.type == PieceType.PAWN) {
             if(this.pieceColor == ChessGame.TeamColor.WHITE) {
 
