@@ -7,7 +7,70 @@ public class RookMovesCalculator implements PieceMovesCalculator{
 
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        int rowIndex = myPosition.getRow() - 1;
+        int colIndex = myPosition.getColumn() - 1;
+        ChessGame.TeamColor color = board.getBoard()[rowIndex][colIndex].getTeamColor();
+
         ArrayList<ChessMove> moves = new ArrayList<>();
+        int tempRowIndex = rowIndex + 1;
+        while(tempRowIndex < 8) {
+            if(board.getBoard()[tempRowIndex][colIndex] == null) {
+                moves.add(new ChessMove(myPosition, new ChessPosition(tempRowIndex + 1, colIndex + 1), null));
+            }
+            else if(board.getBoard()[tempRowIndex][colIndex] != null && board.getBoard()[tempRowIndex][colIndex].pieceColor != color) {
+                moves.add(new ChessMove(myPosition, new ChessPosition(tempRowIndex + 1, colIndex + 1), null));
+                break;
+            }
+            else {
+                break;
+            }
+            tempRowIndex++;
+        }
+
+        tempRowIndex = rowIndex - 1;
+        while(tempRowIndex > -1) {
+            if(board.getBoard()[tempRowIndex][colIndex] == null) {
+                moves.add(new ChessMove(myPosition, new ChessPosition(tempRowIndex + 1, colIndex + 1), null));
+            }
+            else if(board.getBoard()[tempRowIndex][colIndex] != null && board.getBoard()[tempRowIndex][colIndex].pieceColor != color) {
+                moves.add(new ChessMove(myPosition, new ChessPosition(tempRowIndex + 1, colIndex + 1), null));
+                break;
+            }
+            else {
+                break;
+            }
+            tempRowIndex--;
+        }
+
+        int tempColIndex = colIndex + 1;
+        while(tempColIndex < 8) {
+            if(board.getBoard()[rowIndex][tempColIndex] == null) {
+                moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex + 1, tempColIndex + 1), null));
+            }
+            else if(board.getBoard()[rowIndex][tempColIndex] != null && board.getBoard()[rowIndex][tempColIndex].pieceColor != color) {
+                moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex + 1, tempColIndex + 1), null));
+                break;
+            }
+            else {
+                break;
+            }
+            tempColIndex++;
+        }
+
+        tempColIndex = colIndex - 1;
+        while(tempColIndex > -1) {
+            if(board.getBoard()[rowIndex][tempColIndex] == null) {
+                moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex + 1, tempColIndex + 1), null));
+            }
+            else if(board.getBoard()[rowIndex][tempColIndex] != null && board.getBoard()[rowIndex][tempColIndex].pieceColor != color) {
+                moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex + 1, tempColIndex + 1), null));
+                break;
+            }
+            else {
+                break;
+            }
+            tempColIndex--;
+        }
         return moves;
     }
 }

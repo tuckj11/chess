@@ -1,6 +1,5 @@
 package chess;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -57,20 +56,20 @@ public class ChessPiece {
         if (type == PieceType.KING) {
             moves = new KingMovesCalculator().pieceMoves(board, myPosition);
         }
-        if (type == PieceType.QUEEN) {
-            moves = new KingMovesCalculator().pieceMoves(board, myPosition);
+        else if (type == PieceType.QUEEN) {
+            moves = new QueenMovesCalculator().pieceMoves(board, myPosition);
         }
-        if (type == PieceType.BISHOP) {
-            moves = new KingMovesCalculator().pieceMoves(board, myPosition);
+        else if (type == PieceType.BISHOP) {
+            moves = new BishopMovesCalculator().pieceMoves(board, myPosition);
         }
-        if (type == PieceType.KNIGHT) {
-            moves = new KingMovesCalculator().pieceMoves(board, myPosition);
+        else if (type == PieceType.KNIGHT) {
+            moves = new KnightMovesCalculator().pieceMoves(board, myPosition);
         }
-        if (type == PieceType.ROOK) {
-            moves = new KingMovesCalculator().pieceMoves(board, myPosition);
+        else if (type == PieceType.ROOK) {
+            moves = new RookMovesCalculator().pieceMoves(board, myPosition);
         }
         else {
-            moves = new KingMovesCalculator().pieceMoves(board, myPosition);
+            moves = new PawnMovesCalculator().pieceMoves(board, myPosition);
         }
         return moves;
     }
