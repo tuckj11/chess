@@ -53,37 +53,26 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> possibleMoves = new ArrayList<ChessMove>();
-        if(this.type == PieceType.PAWN) {
-            if(this.pieceColor == ChessGame.TeamColor.WHITE) {
-
-            }
-            else if(this.pieceColor == ChessGame.TeamColor.BLACK) {
-
-            }
-            else {
-                // This should never happen
-            }
+        Collection<ChessMove> moves;
+        if (type == PieceType.KING) {
+            moves = new KingMovesCalculator().pieceMoves(board, myPosition);
         }
-        else if(this.type == PieceType.BISHOP) {
-
+        if (type == PieceType.QUEEN) {
+            moves = new KingMovesCalculator().pieceMoves(board, myPosition);
         }
-        else if(this.type == PieceType.QUEEN) {
-
+        if (type == PieceType.BISHOP) {
+            moves = new KingMovesCalculator().pieceMoves(board, myPosition);
         }
-        else if(this.type == PieceType.KNIGHT) {
-
+        if (type == PieceType.KNIGHT) {
+            moves = new KingMovesCalculator().pieceMoves(board, myPosition);
         }
-        else if(this.type == PieceType.ROOK) {
-
-        }
-        else if(this.type == PieceType.KING) {
-
+        if (type == PieceType.ROOK) {
+            moves = new KingMovesCalculator().pieceMoves(board, myPosition);
         }
         else {
-            // This should never happen
+            moves = new KingMovesCalculator().pieceMoves(board, myPosition);
         }
-        return possibleMoves;
+        return moves;
     }
 
     @Override

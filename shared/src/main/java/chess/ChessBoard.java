@@ -87,6 +87,10 @@ public class ChessBoard {
         };
     }
 
+    public ChessPiece[][] getBoard() {
+        return this.board;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
