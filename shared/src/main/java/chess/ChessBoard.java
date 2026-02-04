@@ -22,7 +22,11 @@ public class ChessBoard {
         ChessPiece[][] copyBoard = copy.getBoard();
         for(int i = 0; i < board.length; i++) {
             for(int j = 0; j < board[i].length; j++) {
-                board[i][j] = new ChessPiece(copyBoard[i][j]);
+                if (copyBoard[i][j] != null) {
+                    this.board[i][j] = new ChessPiece(copyBoard[i][j]);
+                } else {
+                    this.board[i][j] = null;
+                }
             }
         }
     }
