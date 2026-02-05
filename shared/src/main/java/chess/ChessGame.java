@@ -59,6 +59,8 @@ public class ChessGame {
         else {
             moves = piece.pieceMoves(board, startPosition);
         }
+        ChessBoard copy = new ChessBoard(board);
+
 
         return moves;
     }
