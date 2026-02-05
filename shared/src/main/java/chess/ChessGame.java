@@ -51,17 +51,30 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        Collection<ChessMove> moves;
+        Collection<ChessMove> tempMoves;
         ChessPiece piece = board.getPiece(startPosition);
         if(piece == null) {
             return null;
         }
+
         else {
-            moves = piece.pieceMoves(board, startPosition);
+            tempMoves = piece.pieceMoves(board, startPosition);
         }
-        ChessBoard copy = new ChessBoard(board);
-
-
+        ChessGame.TeamColor color = piece.getTeamColor();
+        ArrayList<ChessMove> moves = new ArrayList<>(tempMoves);
+        ChessBoard copy;
+        for (int i = moves.size() - 1; i >= 0; i--) {
+            copy = new ChessBoard(board);
+            copy.addPiece(moves.get(i).getEndPosition(), piece);
+            copy.addPiece(moves.get(i).getStartPosition(), null);
+            if(isInCheckCopy(color, copy)) {
+                System.out.println("Bad" + moves.get(i));
+                moves.remove(i);
+            }
+            else {
+                System.out.println("Good" + moves.get(i));
+            }
+        }
         return moves;
     }
 
@@ -105,6 +118,42 @@ public class ChessGame {
                         }
                     } else {
                         enemyMoves.addAll(piece.pieceMoves(board, position));
+                    }
+                }
+            }
+        }
+        for (ChessMove move : enemyMoves) {
+            if (move.getEndPosition().equals(kingPosition)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isInCheckCopy(TeamColor teamColor, ChessBoard copy) {
+        Collection<ChessMove> enemyMoves = new ArrayList<>();
+        ChessPosition kingPosition = null;
+
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                ChessPosition position = new ChessPosition(i, j);
+                ChessPiece piece = copy.getPiece(position);
+                if (piece == null) {
+                    continue;
+                }
+                if (piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor) {
+                    kingPosition = position;
+                }
+                if (piece.getTeamColor() != teamColor) {
+                    if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+                        Collection<ChessMove> pawnMoves = piece.pieceMoves(copy, position);
+                        for (ChessMove pawnMove : pawnMoves) {
+                            if (pawnMove.getStartPosition().getColumn() != pawnMove.getEndPosition().getColumn()) {
+                                enemyMoves.add(pawnMove);
+                            }
+                        }
+                    } else {
+                        enemyMoves.addAll(piece.pieceMoves(copy, position));
                     }
                 }
             }
