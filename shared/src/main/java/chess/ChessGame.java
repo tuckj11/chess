@@ -68,12 +68,12 @@ public class ChessGame {
             copy.addPiece(moves.get(i).getEndPosition(), piece);
             copy.addPiece(moves.get(i).getStartPosition(), null);
             if(isInCheckCopy(color, copy)) {
-                System.out.println("Bad" + moves.get(i));
+                //System.out.println("Bad" + moves.get(i));
                 moves.remove(i);
             }
-            else {
-                System.out.println("Good" + moves.get(i));
-            }
+            //else {
+                //System.out.println("Good" + moves.get(i));
+            //}
         }
         return moves;
     }
