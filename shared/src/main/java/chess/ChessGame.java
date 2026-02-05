@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -31,7 +32,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        turn = team;
+        this.turn = team;
     }
 
     /**
@@ -79,9 +80,40 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
-    }
+        Collection<ChessMove> enemyMoves = new ArrayList<>();
+        ChessPosition kingPosition = null;
 
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                ChessPosition position = new ChessPosition(i, j);
+                ChessPiece piece = board.getPiece(position);
+                if (piece == null) {
+                    continue;
+                }
+                if (piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor) {
+                    kingPosition = position;
+                }
+                if (piece.getTeamColor() != teamColor) {
+                    if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+                        Collection<ChessMove> pawnMoves = piece.pieceMoves(board, position);
+                        for (ChessMove pawnMove : pawnMoves) {
+                            if (pawnMove.getStartPosition().getColumn() != pawnMove.getEndPosition().getColumn()) {
+                                enemyMoves.add(pawnMove);
+                            }
+                        }
+                    } else {
+                        enemyMoves.addAll(piece.pieceMoves(board, position));
+                    }
+                }
+            }
+        }
+        for (ChessMove move : enemyMoves) {
+            if (move.getEndPosition().equals(kingPosition)) {
+                return true;
+            }
+        }
+        return false;
+    }
     /**
      * Determines if the given team is in checkmate
      *
@@ -119,5 +151,19 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return this.board;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessGame chessGame = (ChessGame) o;
+        return turn == chessGame.turn && Objects.equals(getBoard(), chessGame.getBoard());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(turn, getBoard());
     }
 }
