@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.AuthDao;
 import dataaccess.UserDao;
+import model.AuthData;
 import model.UserData;
 
 public class UserService {
@@ -23,10 +24,13 @@ public class UserService {
 
     public RegisterResult register(RegisterRequest r) {
         UserData user = userDao.getUser(r.username());
-        if(user == null) {
-            userDao.createUser(new UserData(r.username(), r.password(), r.email()));
+        if(user != null) {
+            throw new RuntimeException();
         }
-        return null;
+        userDao.createUser(new UserData(r.username(), r.password(), r.email()));
+        AuthData authData = authDao.createAuth(r.username());
+        RegisterResult result = new RegisterResult(authData.username(), authData.authToken(), null);
+        return result;
     }
 
 }

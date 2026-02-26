@@ -9,6 +9,9 @@ import java.util.UUID;
 public class MemoryAuthDao implements AuthDao{
     public HashMap<String, AuthData> authdatabase;
 
+    public MemoryAuthDao() {
+        authdatabase = new HashMap<>();
+    }
     @Override
     public AuthData createAuth(String username) {
         String token = UUID.randomUUID().toString();

@@ -26,7 +26,11 @@ public class Server {
 
         javalin.post("/user", ctx -> {
             UserService.RegisterRequest req = gson.fromJson(ctx.body(), UserService.RegisterRequest.class);
-            userService.register(req);
+            UserService.RegisterResult res = userService.register(req);
+            if (res.username() != null) {
+                ctx.status(200);
+            }
+            ctx.result(gson.toJson(res));
         });
     }
 
