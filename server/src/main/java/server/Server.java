@@ -25,12 +25,33 @@ public class Server {
 
 
         javalin.post("/user", ctx -> {
-            UserService.RegisterRequest req = gson.fromJson(ctx.body(), UserService.RegisterRequest.class);
-            UserService.RegisterResult res = userService.register(req);
-            if (res.username() != null) {
-                ctx.status(200);
+            try {
+                UserService.RegisterRequest req = gson.fromJson(ctx.body(), UserService.RegisterRequest.class);
+                if(isInvalid(req.username()) || isInvalid(req.password()) || isInvalid(req.email())) {
+                    ctx.status(400);
+                    ctx.result(gson.toJson(new UserService.RegisterResult(null, null, "Error: Bad Request")));
+                    return;
+                }
+                UserService.RegisterResult res = userService.register(req);
+                if(res.username() != null) {
+                    ctx.status(200);
+                }
+                else if(res.message().contains("already taken")) {
+                    ctx.status(403);
+                }
+                else {
+                    ctx.status(500);
+                }
+                ctx.result(gson.toJson(res));
             }
-            ctx.result(gson.toJson(res));
+            catch(com.google.gson.JsonSyntaxException e) {
+                ctx.status(400);
+                ctx.result(gson.toJson(new UserService.RegisterResult(null, null, "Error: Bad Request")));
+            }
+            catch(Exception e) {
+                ctx.status(500);
+                ctx.result(gson.toJson(new UserService.RegisterResult(null, null, "Error: " + e.getMessage())));
+            }
         });
     }
 
@@ -41,5 +62,9 @@ public class Server {
 
     public void stop() {
         javalin.stop();
+    }
+
+    private boolean isInvalid(String str){
+        return str == null || str.isEmpty();
     }
 }
