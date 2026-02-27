@@ -10,10 +10,10 @@ public class UserService {
     public record RegisterResult(String username, String authToken, String message) {}
 
     public record LoginRequest(String username, String password) {}
-    public record LoginResult(String username, String authToken) {}
+    public record LoginResult(String username, String authToken, String message) {}
 
     public record LogoutRequest(String authToken) {}
-    public record LogoutResult() {}
+    public record LogoutResult(String message) {}
 
     final UserDao userDao;
     final AuthDao authDao;

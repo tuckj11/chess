@@ -56,6 +56,25 @@ public class Server {
             }
         });
 
+        javalin.post("/session", ctx -> {
+                    try {
+                        UserService.LoginRequest req = gson.fromJson(ctx.body(), UserService.LoginRequest.class);
+                        if (isInvalid(req.username()) || isInvalid(req.password())) {
+                            ctx.status(400);
+                            ctx.result(gson.toJson(new UserService.LoginResult(null, null, "Error: Bad Request")));
+
+                        }
+                    }
+                    catch(com.google.gson.JsonSyntaxException e) {
+                        ctx.status(400);
+                        ctx.result(gson.toJson(new UserService.LoginResult(null, null, "Error: Bad Request")));
+                    }
+                    catch(Exception e) {
+                        ctx.status(500);
+                        ctx.result(gson.toJson(new UserService.LoginResult(null, null, "Error: " + e.getMessage())));
+                    }
+                });
+
         javalin.delete("/db", ctx -> {
             try{
                 ClearService.ClearResult res = clearService.clear();
