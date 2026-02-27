@@ -62,8 +62,20 @@ public class Server {
                         if (isInvalid(req.username()) || isInvalid(req.password())) {
                             ctx.status(400);
                             ctx.result(gson.toJson(new UserService.LoginResult(null, null, "Error: Bad Request")));
-
+                            return;
                         }
+                        UserService.LoginResult res = userService.login(req);
+                        if(res.username() != null) {
+                            ctx.status(200);
+                        }
+                        else if(res.message().contains("unauthorized")) {
+                            ctx.status(401);
+                        }
+                        else {
+                            ctx.status(500);
+                        }
+                        ctx.result(gson.toJson(res));
+
                     }
                     catch(com.google.gson.JsonSyntaxException e) {
                         ctx.status(400);

@@ -32,4 +32,16 @@ public class UserService {
         return new RegisterResult(authData.username(), authData.authToken(), null);
     }
 
+    public LoginResult login(LoginRequest r) {
+        UserData user = userDao.getUser(r.username());
+        if(user == null) {
+            return new LoginResult(null, null, "Error: unauthorized");
+        }
+        else if(!user.password().equals(r.password())) {
+            return new LoginResult(null, null, "Error: unauthorized");
+        }
+        AuthData authData = authDao.createAuth(r.username());
+        return new LoginResult(authData.username(), authData.authToken(), null);
+    }
+
 }
