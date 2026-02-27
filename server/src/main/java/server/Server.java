@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import dataaccess.*;
 import io.javalin.*;
 import org.eclipse.jetty.server.Authentication;
+import service.ClearService;
 import service.UserService;
 
 public class Server {
@@ -21,6 +22,7 @@ public class Server {
         AuthDao authDao = new MemoryAuthDao();
 
         UserService userService = new UserService(userDao, authDao);
+        ClearService clearService = new ClearService(userDao, gameDao, authDao);
 
 
 
@@ -53,7 +55,21 @@ public class Server {
                 ctx.result(gson.toJson(new UserService.RegisterResult(null, null, "Error: " + e.getMessage())));
             }
         });
+
+        javalin.delete("/db", ctx -> {
+            try{
+                ClearService.ClearResult res = clearService.clear();
+                ctx.status(200);
+                ctx.result(gson.toJson(res));
+            }
+            catch(Exception e) {
+                ctx.status(500);
+                ctx.result(gson.toJson(new ClearService.ClearResult("Error: " + e.getMessage())));
+            }
+        });
     }
+
+
 
     public int run(int desiredPort) {
         javalin.start(desiredPort);
