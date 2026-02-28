@@ -27,81 +27,70 @@ public class Server {
         GameService gameService = new GameService(userDao, gameDao, authDao);
 
 
-
         javalin.post("/user", ctx -> {
             try {
                 UserService.RegisterRequest req = gson.fromJson(ctx.body(), UserService.RegisterRequest.class);
-                if(isInvalid(req.username()) || isInvalid(req.password()) || isInvalid(req.email())) {
+                if (isInvalid(req.username()) || isInvalid(req.password()) || isInvalid(req.email())) {
                     ctx.status(400);
                     ctx.result(gson.toJson(new UserService.RegisterResult(null, null, "Error: Bad Request")));
                     return;
                 }
                 UserService.RegisterResult res = userService.register(req);
-                if(res.username() != null) {
+                if (res.username() != null) {
                     ctx.status(200);
-                }
-                else if(res.message().contains("already taken")) {
+                } else if (res.message().contains("already taken")) {
                     ctx.status(403);
-                }
-                else {
+                } else {
                     ctx.status(500);
                 }
                 ctx.result(gson.toJson(res));
-            }
-            catch(com.google.gson.JsonSyntaxException e) {
+            } catch (com.google.gson.JsonSyntaxException e) {
                 ctx.status(400);
                 ctx.result(gson.toJson(new UserService.RegisterResult(null, null, "Error: Bad Request")));
-            }
-            catch(Exception e) {
+            } catch (Exception e) {
                 ctx.status(500);
                 ctx.result(gson.toJson(new UserService.RegisterResult(null, null, "Error: " + e.getMessage())));
             }
         });
 
         javalin.post("/session", ctx -> {
-                    try {
-                        UserService.LoginRequest req = gson.fromJson(ctx.body(), UserService.LoginRequest.class);
-                        if (isInvalid(req.username()) || isInvalid(req.password())) {
-                            ctx.status(400);
-                            ctx.result(gson.toJson(new UserService.LoginResult(null, null, "Error: Bad Request")));
-                            return;
-                        }
-                        UserService.LoginResult res = userService.login(req);
-                        if(res.username() != null) {
-                            ctx.status(200);
-                        }
-                        else if(res.message().contains("unauthorized")) {
-                            ctx.status(401);
-                        }
-                        else {
-                            ctx.status(500);
-                        }
-                        ctx.result(gson.toJson(res));
+            try {
+                UserService.LoginRequest req = gson.fromJson(ctx.body(), UserService.LoginRequest.class);
+                if (isInvalid(req.username()) || isInvalid(req.password())) {
+                    ctx.status(400);
+                    ctx.result(gson.toJson(new UserService.LoginResult(null, null, "Error: Bad Request")));
+                    return;
+                }
+                UserService.LoginResult res = userService.login(req);
+                if (res.username() != null) {
+                    ctx.status(200);
+                } else if (res.message().contains("unauthorized")) {
+                    ctx.status(401);
+                } else {
+                    ctx.status(500);
+                }
+                ctx.result(gson.toJson(res));
 
-                    }
-                    catch(com.google.gson.JsonSyntaxException e) {
-                        ctx.status(400);
-                        ctx.result(gson.toJson(new UserService.LoginResult(null, null, "Error: Bad Request")));
-                    }
-                    catch(Exception e) {
-                        ctx.status(500);
-                        ctx.result(gson.toJson(new UserService.LoginResult(null, null, "Error: " + e.getMessage())));
-                    }
-                });
+            } catch (com.google.gson.JsonSyntaxException e) {
+                ctx.status(400);
+                ctx.result(gson.toJson(new UserService.LoginResult(null, null, "Error: Bad Request")));
+            } catch (Exception e) {
+                ctx.status(500);
+                ctx.result(gson.toJson(new UserService.LoginResult(null, null, "Error: " + e.getMessage())));
+            }
+        });
 
         javalin.delete("/session", ctx -> {
             try {
                 String authToken = ctx.header("Authorization");
                 UserService.LogoutResult res = userService.logout(new UserService.LogoutRequest(authToken));
-                if(res.message() == null) {
+                if (res.message() == null) {
                     ctx.status(200);
-                }
-                else {
+                } else {
                     ctx.status(401);
                 }
                 ctx.result(gson.toJson(res));
-            }
-            catch(Exception e) {
+            } catch (Exception e) {
                 ctx.status(500);
                 ctx.result(gson.toJson(new UserService.LogoutResult("Error: " + e.getMessage())));
             }
@@ -109,24 +98,81 @@ public class Server {
         });
 
         javalin.get("/game", ctx -> {
-            try{
+            try {
                 String authToken = ctx.header("Authorization");
                 GameService.ListResult res = gameService.listGames(new GameService.ListRequest(authToken));
-                if(res.message() == null) {
+                if (res.message() == null) {
                     ctx.status(200);
-                }
-                else {
+                } else {
                     ctx.status(401);
                 }
                 ctx.result(gson.toJson(res));
-            }
-            catch(Exception e) {
+            } catch (Exception e) {
                 ctx.status(500);
                 ctx.result(gson.toJson(new GameService.ListResult(null, "Error: " + e.getMessage())));
             }
         });
 
+        javalin.post("/game", ctx -> {
+            try {
+                String authToken = ctx.header("Authorization");
+                GameService.CreateRequest req = gameService.addAuthToCreateRequest(authToken, gson.fromJson(ctx.body(), GameService.CreateRequest.class));
+                if (isInvalid(req.gameName())) {
+                    ctx.status(400);
+                    ctx.result(gson.toJson(new GameService.CreateResult(null, "Error: Bad Request")));
+                    return;
+                }
+                GameService.CreateResult res = gameService.createGame(req);
+                if (res.gameID() != null) {
+                    ctx.status(200);
+                } else if (res.message().contains("unauthorized")) {
+                    ctx.status(401);
+                } else {
+                    ctx.status(500);
+                }
+                ctx.result(gson.toJson(res));
+            } catch (com.google.gson.JsonSyntaxException e) {
+                ctx.status(400);
+                ctx.result(gson.toJson(new GameService.CreateResult(null, "Error: Bad Request")));
+            } catch (Exception e) {
+                ctx.status(500);
+                ctx.result(gson.toJson(new GameService.CreateResult(null, "Error: " + e.getMessage())));
+            }
+        });
 
+        javalin.put("/game", ctx -> {
+            try {
+                String authToken = ctx.header("Authorization");
+                GameService.JoinRequest req = gameService.addAuthToJoinRequest(authToken, gson.fromJson(ctx.body(), GameService.JoinRequest.class));
+                if (req.playerColor() == null || (!req.playerColor().equals("WHITE") && !req.playerColor().equals("BLACK"))) {
+                    ctx.status(400);
+                    ctx.result(gson.toJson(new GameService.JoinResult("Error: Bad Request")));
+                    return;
+                }
+                GameService.JoinResult res = gameService.joinGame(req);
+                if (res.message() == null) {
+                    ctx.status(200);
+                } else if (res.message().contains("unauthorized")) {
+                    ctx.status(401);
+                } else if (res.message().contains("Request")) {
+                    ctx.status(400);
+                } else if (res.message().contains("Taken")) {
+                    ctx.status(403);
+                }
+                else {
+                    ctx.status(500);
+                }
+                ctx.result(gson.toJson(res));
+
+            }
+            catch (com.google.gson.JsonSyntaxException e) {
+                ctx.status(400);
+                ctx.result(gson.toJson(new GameService.JoinResult("Error: Bad Request")));
+            } catch (Exception e) {
+                ctx.status(500);
+                ctx.result(gson.toJson(new GameService.JoinResult("Error: " + e.getMessage())));
+            }
+        });
 
         javalin.delete("/db", ctx -> {
             try{
