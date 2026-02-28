@@ -57,4 +57,8 @@ public class MemoryGameDao implements GameDao{
     public void clear() {
         gamedatabase.clear();
     }
+
+    public HashMap<Integer, GameData> getdatabase() {
+        return this.gamedatabase;
+    }
 }

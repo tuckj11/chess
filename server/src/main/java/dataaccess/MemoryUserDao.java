@@ -1,5 +1,6 @@
 package dataaccess;
 
+import model.GameData;
 import model.UserData;
 
 import java.util.HashMap;
@@ -24,5 +25,9 @@ public class MemoryUserDao implements UserDao{
     @Override
     public void clear() {
         userdatabase.clear();
+    }
+
+    public HashMap<String, UserData> getdatabase() {
+        return this.userdatabase;
     }
 }
