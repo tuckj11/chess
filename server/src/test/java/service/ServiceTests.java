@@ -1,14 +1,9 @@
 package service;
 
-import chess.ChessGame;
 import dataaccess.*;
-import service.UserService;
 import org.junit.jupiter.api.*;
 import passoff.model.*;
-import passoff.server.TestServerFacade;
-import server.Server;
 
-import java.net.HttpURLConnection;
 import java.util.*;
 
 public class ServiceTests {

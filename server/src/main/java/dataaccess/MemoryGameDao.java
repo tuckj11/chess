@@ -16,7 +16,7 @@ public class MemoryGameDao implements GameDao{
 
     @Override
     public ArrayList<GameData> getGames() {
-        return new ArrayList<GameData>(gamedatabase.values());
+        return new ArrayList<>(gamedatabase.values());
     }
 
     @Override
