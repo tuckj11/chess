@@ -5,6 +5,7 @@ import dataaccess.*;
 import io.javalin.*;
 import org.eclipse.jetty.server.Authentication;
 import service.ClearService;
+import service.GameService;
 import service.UserService;
 
 public class Server {
@@ -23,6 +24,7 @@ public class Server {
 
         UserService userService = new UserService(userDao, authDao);
         ClearService clearService = new ClearService(userDao, gameDao, authDao);
+        GameService gameService = new GameService(userDao, gameDao, authDao);
 
 
 
@@ -105,6 +107,26 @@ public class Server {
             }
 
         });
+
+        javalin.get("/game", ctx -> {
+            try{
+                String authToken = ctx.header("Authorization");
+                GameService.ListResult res = gameService.listGames(new GameService.ListRequest(authToken));
+                if(res.message() == null) {
+                    ctx.status(200);
+                }
+                else {
+                    ctx.status(401);
+                }
+                ctx.result(gson.toJson(res));
+            }
+            catch(Exception e) {
+                ctx.status(500);
+                ctx.result(gson.toJson(new GameService.ListResult(null, "Error: " + e.getMessage())));
+            }
+        });
+
+
 
         javalin.delete("/db", ctx -> {
             try{
