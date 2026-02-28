@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.AuthDao;
+import dataaccess.DataAccessException;
 import dataaccess.UserDao;
 import model.AuthData;
 import model.UserData;
@@ -42,6 +43,15 @@ public class UserService {
         }
         AuthData authData = authDao.createAuth(r.username());
         return new LoginResult(authData.username(), authData.authToken(), null);
+    }
+
+    public LogoutResult logout(LogoutRequest r) {
+        AuthData auth = authDao.verifyAuth(r.authToken());
+        if(auth == null) {
+            return new LogoutResult("Error: unauthorized");
+        }
+        authDao.deleteAuth(auth);
+        return new LogoutResult(null);
     }
 
 }

@@ -87,6 +87,25 @@ public class Server {
                     }
                 });
 
+        javalin.delete("/session", ctx -> {
+            try {
+                String authToken = ctx.header("Authorization");
+                UserService.LogoutResult res = userService.logout(new UserService.LogoutRequest(authToken));
+                if(res.message() == null) {
+                    ctx.status(200);
+                }
+                else {
+                    ctx.status(401);
+                }
+                ctx.result(gson.toJson(res));
+            }
+            catch(Exception e) {
+                ctx.status(500);
+                ctx.result(gson.toJson(new UserService.LogoutResult("Error: " + e.getMessage())));
+            }
+
+        });
+
         javalin.delete("/db", ctx -> {
             try{
                 ClearService.ClearResult res = clearService.clear();
