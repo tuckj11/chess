@@ -18,8 +18,8 @@ public class ServiceTests {
     private static ClearService clearService;
     private static GameService gameService;
 
-    @BeforeAll
-    public static void init() {
+    @BeforeEach
+    public void init() {
         userDao = new MemoryUserDao();
         gameDao = new MemoryGameDao();
         authDao = new MemoryAuthDao();
@@ -124,7 +124,7 @@ public class ServiceTests {
     @DisplayName("Create Negative")
     public void createFailure() {
         userService.register(new UserService.RegisterRequest("username", "password", "email"));
-        UserService.LoginResult log = userService.login(new UserService.LoginRequest("username", "password"));
+        userService.login(new UserService.LoginRequest("username", "password"));
 
         GameService.CreateResult res = gameService.createGame(new GameService.CreateRequest("name", "game"));
         Assertions.assertNull(res.gameID());
@@ -226,7 +226,7 @@ public class ServiceTests {
     public void clearSuccess() {
         userService.register(new UserService.RegisterRequest("username", "password", "email"));
         UserService.LoginResult log = userService.login(new UserService.LoginRequest("username", "password"));
-        GameService.CreateResult res = gameService.createGame(new GameService.CreateRequest(log.authToken(), "game"));
+        gameService.createGame(new GameService.CreateRequest(log.authToken(), "game"));
         clearService.clear();
 
         HashMap<String, UserData> users = userDao.getdatabase();
