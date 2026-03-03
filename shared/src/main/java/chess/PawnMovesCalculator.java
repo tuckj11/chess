@@ -84,7 +84,8 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
                     moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex + 2, colIndex + 2), ChessPiece.PieceType.ROOK));
                     moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex + 2, colIndex + 2), ChessPiece.PieceType.QUEEN));
                 }
-                if(colIndex - 1 > -1 && board.getBoard()[rowIndex + 1][colIndex - 1] != null && board.getBoard()[rowIndex + 1][colIndex - 1].pieceColor != color) {
+                if(colIndex - 1 > -1 && board.getBoard()[rowIndex + 1][colIndex - 1] != null
+                        && board.getBoard()[rowIndex + 1][colIndex - 1].pieceColor != color) {
                     moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex + 2, colIndex), ChessPiece.PieceType.BISHOP));
                     moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex + 2, colIndex), ChessPiece.PieceType.KNIGHT));
                     moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex + 2, colIndex), ChessPiece.PieceType.ROOK));
