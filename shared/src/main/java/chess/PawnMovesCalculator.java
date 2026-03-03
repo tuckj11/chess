@@ -20,10 +20,12 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
                         moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex - 1, colIndex + 1), null));
                     }
                 }
-                if(colIndex + 1 < 8 && board.getBoard()[rowIndex - 1][colIndex + 1] != null && board.getBoard()[rowIndex - 1][colIndex + 1].pieceColor != color) {
+                if(colIndex + 1 < 8 && board.getBoard()[rowIndex - 1][colIndex + 1] != null
+                        && board.getBoard()[rowIndex - 1][colIndex + 1].pieceColor != color) {
                     moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex, colIndex + 2), null));
                 }
-                if(colIndex - 1 > -1 && board.getBoard()[rowIndex - 1][colIndex - 1] != null && board.getBoard()[rowIndex - 1][colIndex - 1].pieceColor != color) {
+                if(colIndex - 1 > -1 && board.getBoard()[rowIndex - 1][colIndex - 1] != null
+                        && board.getBoard()[rowIndex - 1][colIndex - 1].pieceColor != color) {
                     moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex, colIndex), null));
                 }
             }
@@ -34,13 +36,15 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
                     moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex, colIndex + 1), ChessPiece.PieceType.ROOK));
                     moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex, colIndex + 1), ChessPiece.PieceType.QUEEN));
                 }
-                if(colIndex + 1 < 8 && board.getBoard()[rowIndex - 1][colIndex + 1] != null && board.getBoard()[rowIndex - 1][colIndex + 1].pieceColor != color) {
+                if(colIndex + 1 < 8 && board.getBoard()[rowIndex - 1][colIndex + 1] != null
+                        && board.getBoard()[rowIndex - 1][colIndex + 1].pieceColor != color) {
                     moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex, colIndex + 2), ChessPiece.PieceType.BISHOP));
                     moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex, colIndex + 2), ChessPiece.PieceType.KNIGHT));
                     moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex, colIndex + 2), ChessPiece.PieceType.ROOK));
                     moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex, colIndex + 2), ChessPiece.PieceType.QUEEN));
                 }
-                if(colIndex - 1 > -1 && board.getBoard()[rowIndex - 1][colIndex - 1] != null && board.getBoard()[rowIndex - 1][colIndex - 1].pieceColor != color) {
+                if(colIndex - 1 > -1 && board.getBoard()[rowIndex - 1][colIndex - 1] != null
+                        && board.getBoard()[rowIndex - 1][colIndex - 1].pieceColor != color) {
                     moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex, colIndex), ChessPiece.PieceType.BISHOP));
                     moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex, colIndex), ChessPiece.PieceType.KNIGHT));
                     moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex, colIndex), ChessPiece.PieceType.ROOK));
@@ -57,10 +61,12 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
                         moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex + 3, colIndex + 1), null));
                     }
                 }
-                if(colIndex + 1 < 8 && board.getBoard()[rowIndex + 1][colIndex + 1] != null && board.getBoard()[rowIndex + 1][colIndex + 1].pieceColor != color) {
+                if(colIndex + 1 < 8 && board.getBoard()[rowIndex + 1][colIndex + 1] != null
+                        && board.getBoard()[rowIndex + 1][colIndex + 1].pieceColor != color) {
                     moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex + 2, colIndex + 2), null));
                 }
-                if(colIndex - 1 > -1 && board.getBoard()[rowIndex + 1][colIndex - 1] != null && board.getBoard()[rowIndex + 1][colIndex - 1].pieceColor != color) {
+                if(colIndex - 1 > -1 && board.getBoard()[rowIndex + 1][colIndex - 1] != null
+                        && board.getBoard()[rowIndex + 1][colIndex - 1].pieceColor != color) {
                     moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex + 2, colIndex), null));
                 }
             }
@@ -71,7 +77,8 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
                     moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex + 2, colIndex + 1), ChessPiece.PieceType.ROOK));
                     moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex + 2, colIndex + 1), ChessPiece.PieceType.QUEEN));
                 }
-                if(colIndex + 1 < 8 && board.getBoard()[rowIndex + 1][colIndex + 1] != null && board.getBoard()[rowIndex + 1][colIndex + 1].pieceColor != color) {
+                if(colIndex + 1 < 8 && board.getBoard()[rowIndex + 1][colIndex + 1] != null
+                        && board.getBoard()[rowIndex + 1][colIndex + 1].pieceColor != color) {
                     moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex + 2, colIndex + 2), ChessPiece.PieceType.BISHOP));
                     moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex + 2, colIndex + 2), ChessPiece.PieceType.KNIGHT));
                     moves.add(new ChessMove(myPosition, new ChessPosition(rowIndex + 2, colIndex + 2), ChessPiece.PieceType.ROOK));

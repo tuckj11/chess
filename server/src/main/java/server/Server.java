@@ -3,7 +3,6 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.*;
 import io.javalin.*;
-import org.eclipse.jetty.server.Authentication;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
@@ -116,7 +115,8 @@ public class Server {
         javalin.post("/game", ctx -> {
             try {
                 String authToken = ctx.header("Authorization");
-                GameService.CreateRequest req = gameService.addAuthToCreateRequest(authToken, gson.fromJson(ctx.body(), GameService.CreateRequest.class));
+                GameService.CreateRequest req = gameService.addAuthToCreateRequest(authToken,
+                        gson.fromJson(ctx.body(), GameService.CreateRequest.class));
                 if (isInvalid(req.gameName())) {
                     ctx.status(400);
                     ctx.result(gson.toJson(new GameService.CreateResult(null, "Error: Bad Request")));
