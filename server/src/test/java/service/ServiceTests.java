@@ -153,8 +153,8 @@ public class ServiceTests {
         GameData game2 = gameDao.getdatabase().get(g2.gameID());
 
         ArrayList<GameData> games = new ArrayList<>();
-        games.add(game2);
         games.add(game1);
+        games.add(game2);
         Assertions.assertEquals(res.games(), games);
     }
     @Test
