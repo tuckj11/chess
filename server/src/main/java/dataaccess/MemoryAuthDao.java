@@ -33,4 +33,8 @@ public class MemoryAuthDao implements AuthDao{
     public void clear() {
         authdatabase.clear();
     }
+
+    public HashMap<String, AuthData> getdatabase() {
+        return this.authdatabase;
+    }
 }
