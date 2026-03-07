@@ -23,9 +23,9 @@ public class Server {
             throw new RuntimeException(e);
         }
 
-        UserDao userDao = new MemoryUserDao();
-        GameDao gameDao = new MemoryGameDao();
-        AuthDao authDao = new MemoryAuthDao();
+        UserDao userDao = new SQLUserDao();
+        GameDao gameDao = new SQLGameDao();
+        AuthDao authDao = new SQLAuthDao();
 
         UserService userService = new UserService(userDao, authDao);
         ClearService clearService = new ClearService(userDao, gameDao, authDao);
