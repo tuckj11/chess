@@ -15,6 +15,14 @@ public class Server {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
         Gson gson = new Gson();
+
+        try {
+            DatabaseManager.createDatabase();
+        }
+        catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+
         UserDao userDao = new MemoryUserDao();
         GameDao gameDao = new MemoryGameDao();
         AuthDao authDao = new MemoryAuthDao();
