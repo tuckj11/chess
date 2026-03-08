@@ -24,12 +24,27 @@ public class SQLUserDao implements UserDao{
     }
 
     @Override
-    public void createUser(UserData userData) {
+    public void createUser(UserData userData) throws DataAccessException{
+        String sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+        try (var conn = DatabaseManager.getConnection(); var ps = conn.prepareStatement(sql)) {
+            ps.setString(1, userData.username());
+            ps.setString(2, userData.password());
+            ps.setString(3, userData.email());
+            ps.executeQuery();
+        }
+        catch (SQLException e) {
+            throw new DataAccessException("failed to register user");
 
+        }
     }
 
     @Override
-    public void clear() {
-
+    public void clear() throws DataAccessException{
+        String sql = "TRUNCATE TABLE users";
+        try (var conn = DatabaseManager.getConnection(); var ps = conn.prepareStatement(sql)) {
+            ps.executeQuery();
+        } catch (SQLException e) {
+            throw new DataAccessException("failed to clear users");
+        }
     }
 }

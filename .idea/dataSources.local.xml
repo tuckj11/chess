@@ -15,6 +15,7 @@
           <node kind="schema">
             <name qname="@" />
             <name qname="mysql" />
+            <name qname="chess" />
           </node>
         </introspection-scope>
       </schema-mapping>

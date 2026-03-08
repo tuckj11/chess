@@ -35,16 +35,16 @@ public class DatabaseManager {
 
             var createAuthTable = """
                     CREATE TABLE IF NOT EXISTS auths(
-                        authToken VARCHAR(256) PRIMARY KEY
+                        authToken VARCHAR(256) PRIMARY KEY,
                         username VARCHAR(64) NOT NULL)""";
 
             var createGameTable = """
                     CREATE TABLE IF NOT EXISTS games(
-                        gameID INT PRIMARY KEY AUTO_INCREMENT
-                        whiteUsername VARCHAR(256)
-                        blackUsername VARCHAR(256)
-                        gameName VARCHAR(256) NOT NULL
-                        chessGame VARCHAR(4096)""";
+                        gameID INT PRIMARY KEY AUTO_INCREMENT,
+                        whiteUsername VARCHAR(256),
+                        blackUsername VARCHAR(256),
+                        gameName VARCHAR(256) NOT NULL,
+                        chessGame VARCHAR(4096) NOT NULL)""";
 
             try (var ps = conn.prepareStatement(createUserTable)) {
                 ps.executeUpdate();

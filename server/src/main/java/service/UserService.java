@@ -5,6 +5,8 @@ import dataaccess.DataAccessException;
 import dataaccess.UserDao;
 import model.AuthData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
+
 
 public class UserService {
     public record RegisterRequest(String username, String password, String email) {}
@@ -29,7 +31,8 @@ public class UserService {
             if (user != null) {
                 return new RegisterResult(null, null, "Error: already taken");
             }
-            userDao.createUser(new UserData(r.username(), r.password(), r.email()));
+            String password = BCrypt.hashpw(r.password(), BCrypt.gensalt());
+            userDao.createUser(new UserData(r.username(), password, r.email()));
             AuthData authData = authDao.createAuth(r.username());
             return new RegisterResult(authData.username(), authData.authToken(), null);
         } catch (DataAccessException e) {
