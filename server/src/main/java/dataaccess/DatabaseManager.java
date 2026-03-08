@@ -28,18 +28,18 @@ public class DatabaseManager {
             conn.setCatalog(databaseName);
 
             var createUserTable = """
-                    CREATE TABLE IF NOT EXISTS user (
+                    CREATE TABLE IF NOT EXISTS users (
                         username VARCHAR(64) PRIMARY KEY,
                         password VARCHAR(256) NOT NULL,
                         email varchar(256) NOT NULL)""";
 
             var createAuthTable = """
-                    CREATE TABLE IF NOT EXISTS auth(
+                    CREATE TABLE IF NOT EXISTS auths(
                         authToken VARCHAR(256) PRIMARY KEY
                         username VARCHAR(64) NOT NULL)""";
 
             var createGameTable = """
-                    CREATE TABLE IF NOT EXISTS game(
+                    CREATE TABLE IF NOT EXISTS games(
                         gameID INT PRIMARY KEY AUTO_INCREMENT
                         whiteUsername VARCHAR(256)
                         blackUsername VARCHAR(256)

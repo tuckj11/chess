@@ -23,26 +23,34 @@ public class UserService {
         this.authDao = authDao;
     }
 
-    public RegisterResult register(RegisterRequest r) {
-        UserData user = userDao.getUser(r.username());
-        if(user != null) {
-            return new RegisterResult(null, null, "Error: already taken");
+    public RegisterResult register(RegisterRequest r)  {
+        try {
+            UserData user = userDao.getUser(r.username());
+            if (user != null) {
+                return new RegisterResult(null, null, "Error: already taken");
+            }
+            userDao.createUser(new UserData(r.username(), r.password(), r.email()));
+            AuthData authData = authDao.createAuth(r.username());
+            return new RegisterResult(authData.username(), authData.authToken(), null);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
         }
-        userDao.createUser(new UserData(r.username(), r.password(), r.email()));
-        AuthData authData = authDao.createAuth(r.username());
-        return new RegisterResult(authData.username(), authData.authToken(), null);
     }
 
     public LoginResult login(LoginRequest r) {
-        UserData user = userDao.getUser(r.username());
-        if(user == null) {
-            return new LoginResult(null, null, "Error: unauthorized");
+        try {
+            UserData user = userDao.getUser(r.username());
+            if (user == null) {
+                return new LoginResult(null, null, "Error: unauthorized");
+            } else if (!user.password().equals(r.password())) {
+                return new LoginResult(null, null, "Error: unauthorized");
+            }
+            AuthData authData = authDao.createAuth(r.username());
+            return new LoginResult(authData.username(), authData.authToken(), null);
         }
-        else if(!user.password().equals(r.password())) {
-            return new LoginResult(null, null, "Error: unauthorized");
+        catch (DataAccessException e) {
+            throw new RuntimeException(e);
         }
-        AuthData authData = authDao.createAuth(r.username());
-        return new LoginResult(authData.username(), authData.authToken(), null);
     }
 
     public LogoutResult logout(LogoutRequest r) {
