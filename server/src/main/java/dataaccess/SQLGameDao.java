@@ -10,7 +10,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class SQLGameDao implements GameDao{
-    private static final Gson gson = new Gson();
+    private static final Gson GSON = new Gson();
 
     @Override
     public ArrayList<GameData> getGames() throws DataAccessException {
@@ -27,7 +27,7 @@ public class SQLGameDao implements GameDao{
                  String blackUsername = rs.getString("blackUsername");
                  String gameName = rs.getString("gameName");
                  String json = rs.getString("chessGame");
-                 ChessGame game = gson.fromJson(json, ChessGame.class);
+                 ChessGame game = GSON.fromJson(json, ChessGame.class);
                  results.add(new GameData(id, whiteUsername, blackUsername, gameName, game));
              }
              return results;
@@ -42,7 +42,7 @@ public class SQLGameDao implements GameDao{
         String sql = "INSERT INTO games (gameName, chessGame) VALUES (?, ?)";
         try (var conn = DatabaseManager.getConnection(); var ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, gameName);
-            String game = gson.toJson(new ChessGame());
+            String game = GSON.toJson(new ChessGame());
             ps.setString(2, game);
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
