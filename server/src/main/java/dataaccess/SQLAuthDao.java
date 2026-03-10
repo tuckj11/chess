@@ -46,7 +46,7 @@ public class SQLAuthDao implements AuthDao{
         String sql = "DELETE FROM auths WHERE authToken=?";
         try (var conn = DatabaseManager.getConnection(); var ps = conn.prepareStatement(sql)) {
             ps.setString(1, authData.authToken());
-            var rs = ps.executeQuery();
+            ps.executeUpdate();
         }
         catch (SQLException e) {
             throw new DataAccessException("failed to delete auth");
