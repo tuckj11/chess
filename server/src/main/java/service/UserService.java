@@ -45,7 +45,9 @@ public class UserService {
             UserData user = userDao.getUser(r.username());
             if (user == null) {
                 return new LoginResult(null, null, "Error: unauthorized");
-            } else if (!user.password().equals(r.password())) {
+            }
+            String password = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+            if (password.equals(r.password())) {
                 return new LoginResult(null, null, "Error: unauthorized");
             }
             AuthData authData = authDao.createAuth(r.username());
@@ -57,12 +59,17 @@ public class UserService {
     }
 
     public LogoutResult logout(LogoutRequest r) {
-        AuthData auth = authDao.verifyAuth(r.authToken());
-        if(auth == null) {
-            return new LogoutResult("Error: unauthorized");
+        try {
+            AuthData auth = authDao.verifyAuth(r.authToken());
+            if (auth == null) {
+                return new LogoutResult("Error: unauthorized");
+            }
+            authDao.deleteAuth(auth);
+            return new LogoutResult(null);
         }
-        authDao.deleteAuth(auth);
-        return new LogoutResult(null);
+        catch (DataAccessException e){
+            throw new RuntimeException(e);
+        }
     }
 
 }
