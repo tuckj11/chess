@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.AuthDao;
+import dataaccess.DataAccessException;
 import dataaccess.GameDao;
 import dataaccess.UserDao;
 import model.AuthData;
@@ -28,41 +29,52 @@ public class GameService {
     }
 
     public ListResult listGames(ListRequest r) {
-        AuthData auth = authDao.verifyAuth(r.authToken());
-        if(auth == null){
-            return new ListResult(null, "Error: unauthorized");
+        try {
+            AuthData auth = authDao.verifyAuth(r.authToken());
+            if (auth == null) {
+                return new ListResult(null, "Error: unauthorized");
+            } else {
+                ArrayList<GameData> games = gameDao.getGames();
+                return new ListResult(games, null);
+            }
         }
-        else{
-            ArrayList<GameData> games = gameDao.getGames();
-            return new ListResult(games, null);
+        catch (DataAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 
     public CreateResult createGame(CreateRequest r) {
-        AuthData auth = authDao.verifyAuth(r.authToken());
-        if(auth == null){
-            return new CreateResult(null, "Error: unauthorized");
+        try {
+            AuthData auth = authDao.verifyAuth(r.authToken());
+            if (auth == null) {
+                return new CreateResult(null, "Error: unauthorized");
+            } else {
+                Integer gameID = gameDao.makeGame(r.gameName());
+                return new CreateResult(gameID, null);
+            }
         }
-        else {
-            Integer gameID = gameDao.makeGame(r.gameName());
-            return new CreateResult(gameID, null);
+        catch (DataAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 
     public JoinResult joinGame(JoinRequest r) {
-        AuthData auth = authDao.verifyAuth(r.authToken());
-        if(auth == null){
-            return new JoinResult("Error: unauthorized");
+        try {
+            AuthData auth = authDao.verifyAuth(r.authToken());
+            if (auth == null) {
+                return new JoinResult("Error: unauthorized");
+            }
+            int successfulJoin = gameDao.connectToGame(auth.username(), r.gameID(), r.playerColor());
+            if (successfulJoin == 0) {
+                return new JoinResult(null);
+            } else if (successfulJoin == 1) {
+                return new JoinResult("Error: Bad Request");
+            } else {
+                return new JoinResult("Error: Already Taken");
+            }
         }
-        int successfulJoin = gameDao.connectToGame(auth.username(), r.gameID(), r.playerColor());
-        if(successfulJoin == 0) {
-            return new JoinResult(null);
-        }
-        else if(successfulJoin == 1) {
-            return new JoinResult("Error: Bad Request");
-        }
-        else {
-            return new JoinResult("Error: Already Taken");
+        catch (DataAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 
