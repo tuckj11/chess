@@ -20,9 +20,13 @@ public class ClearService {
     }
 
     public ClearResult clear() {
-        userDao.clear();
-        gameDao.clear();
-        authDao.clear();
-        return new ClearResult(null);
+        try {
+            userDao.clear();
+            gameDao.clear();
+            authDao.clear();
+            return new ClearResult(null);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
