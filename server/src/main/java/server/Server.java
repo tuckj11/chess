@@ -160,7 +160,7 @@ public class Server {
                 String authToken = ctx.header("Authorization");
                 GameService.JoinRequest req = gameService.addAuthToJoinRequest(authToken,
                         gson.fromJson(ctx.body(), GameService.JoinRequest.class));
-                if (req.playerColor() == null || (!req.playerColor().equals("WHITE") && !req.playerColor().equals("BLACK"))) {
+                if (req.playerColor() == null || (!req.playerColor().equals("WHITE") && !req.playerColor().equals("BLACK")) || req.gameID() == null) {
                     ctx.status(400);
                     ctx.result(gson.toJson(new GameService.JoinResult("Error: Bad Request")));
                     return;
