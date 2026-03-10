@@ -30,7 +30,7 @@ public class SQLUserDao implements UserDao{
             ps.setString(1, userData.username());
             ps.setString(2, userData.password());
             ps.setString(3, userData.email());
-            ps.executeQuery();
+            ps.executeUpdate();
         }
         catch (SQLException e) {
             throw new DataAccessException("failed to register user");
@@ -42,7 +42,7 @@ public class SQLUserDao implements UserDao{
     public void clear() throws DataAccessException{
         String sql = "TRUNCATE TABLE users";
         try (var conn = DatabaseManager.getConnection(); var ps = conn.prepareStatement(sql)) {
-            ps.executeQuery();
+            ps.execute();
         } catch (SQLException e) {
             throw new DataAccessException("failed to clear users");
         }

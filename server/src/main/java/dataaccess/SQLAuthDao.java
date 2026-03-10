@@ -15,7 +15,7 @@ public class SQLAuthDao implements AuthDao{
             String token = UUID.randomUUID().toString();
             ps.setString(1, token);
             ps.setString(2, username);
-            ps.executeQuery();
+            ps.executeUpdate();
             return new AuthData(token, username);
         }
         catch (SQLException e) {
@@ -57,7 +57,7 @@ public class SQLAuthDao implements AuthDao{
     public void clear() throws DataAccessException{
         String sql = "TRUNCATE TABLE auths";
         try (var conn = DatabaseManager.getConnection(); var ps = conn.prepareStatement(sql)) {
-            ps.executeQuery();
+            ps.execute();
         } catch (SQLException e) {
             throw new DataAccessException("failed to clear auths");
         }
