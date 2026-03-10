@@ -46,8 +46,8 @@ public class UserService {
             if (user == null) {
                 return new LoginResult(null, null, "Error: unauthorized");
             }
-            String password = BCrypt.hashpw(user.password(), BCrypt.gensalt());
-            if (password.equals(r.password())) {
+            if (!BCrypt.checkpw(r.password(), user.password())) {
+                System.out.println(user.password());
                 return new LoginResult(null, null, "Error: unauthorized");
             }
             AuthData authData = authDao.createAuth(r.username());
