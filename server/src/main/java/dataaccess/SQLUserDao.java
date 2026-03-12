@@ -34,7 +34,6 @@ public class SQLUserDao implements UserDao{
         }
         catch (SQLException e) {
             throw new DataAccessException("failed to register user");
-
         }
     }
 
