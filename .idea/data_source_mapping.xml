@@ -4,5 +4,6 @@
     <file url="file://$PROJECT_DIR$/server/src/main/java/dataaccess/SQLAuthDao.java" value="4af29bc8-156f-41a6-8206-29bf5a7ac686" />
     <file url="file://$PROJECT_DIR$/server/src/main/java/dataaccess/SQLGameDao.java" value="4af29bc8-156f-41a6-8206-29bf5a7ac686" />
     <file url="file://$PROJECT_DIR$/server/src/main/java/dataaccess/SQLUserDao.java" value="4af29bc8-156f-41a6-8206-29bf5a7ac686" />
+    <file url="file://$PROJECT_DIR$/server/src/test/java/dataaccess/DataAccessTests.java" value="4af29bc8-156f-41a6-8206-29bf5a7ac686" />
   </component>
 </project>
