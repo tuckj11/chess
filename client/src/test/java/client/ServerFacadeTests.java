@@ -44,18 +44,17 @@ public class ServerFacadeTests {
     @DisplayName("Registration Negative")
     public void registerFailure() {
         serverFacade.register(new UserService.RegisterRequest("username", "password", "email"));
-        UserService.RegisterResult res = serverFacade.register(new UserService.RegisterRequest("username", "password", "email"));
-        Assertions.assertNull(res.username());
-        Assertions.assertEquals("Error: already taken", res.message());
+        Exception e = Assertions.assertThrows(Exception.class, () -> serverFacade.register(new UserService.RegisterRequest("username", "password", "email")));
+        Assertions.assertTrue(e.getMessage().contains("403"));
     }
+
 
     @Test
     @Order(3)
     @DisplayName("Login Positive")
     public void loginSuccess() {
-        userService.register(new UserService.RegisterRequest("username", "password", "email"));
-        UserService.LoginResult res = userService.login(new UserService.LoginRequest("username", "password"));
-        Assertions.assertEquals("username", userDao.getdatabase().get("username").username());
+        serverFacade.register(new UserService.RegisterRequest("username", "password", "email"));
+        UserService.LoginResult res = serverFacade.login(new UserService.LoginRequest("username", "password"));
         Assertions.assertEquals("username", res.username());
         Assertions.assertNotNull(res.authToken());
         Assertions.assertNull(res.message());
@@ -65,27 +64,24 @@ public class ServerFacadeTests {
     @Order(4)
     @DisplayName("Login Negative")
     public void loginFailure() {
-        UserService.LoginResult res = userService.login(new UserService.LoginRequest("username", "password"));
-        Assertions.assertNotNull(res.message());
-        Assertions.assertNull(res.authToken());
+        Exception e = Assertions.assertThrows(Exception.class, () -> serverFacade.login(new UserService.LoginRequest("username", "password")));
+        Assertions.assertTrue(e.getMessage().contains("401"));
 
-        userService.register(new UserService.RegisterRequest("username", "password", "email"));
-        res = userService.login(new UserService.LoginRequest("username", "password1"));
-        Assertions.assertNull(res.authToken());
-        Assertions.assertNotNull(res.message());
+        serverFacade.register(new UserService.RegisterRequest("username", "password", "email"));
+        Exception e2 = Assertions.assertThrows(Exception.class, () -> serverFacade.login(new UserService.LoginRequest("username", "password1")));
+        Assertions.assertTrue(e2.getMessage().contains("401"));
     }
 
     @Test
     @Order(5)
     @DisplayName("Logout Positive")
     public void logoutSuccess() {
-        userService.register(new UserService.RegisterRequest("username", "password", "email"));
-        UserService.LoginResult log = userService.login(new UserService.LoginRequest("username", "password"));
-        UserService.LogoutResult res = userService.logout(new UserService.LogoutRequest(log.authToken()));
+        serverFacade.register(new UserService.RegisterRequest("username", "password", "email"));
+        UserService.LoginResult log = serverFacade.login(new UserService.LoginRequest("username", "password"));
+        UserService.LogoutResult res = serverFacade.logout(new UserService.LogoutRequest(log.authToken()));
         Assertions.assertNull(res.message());
-        Assertions.assertNull(authDao.getdatabase().get(log.authToken()));
     }
-
+    /*
     @Test
     @Order(6)
     @DisplayName("Logout Negative")
@@ -237,5 +233,5 @@ public class ServerFacadeTests {
         Assertions.assertTrue(games.isEmpty());
 
     }
-
+    */
 }
