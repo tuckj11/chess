@@ -23,41 +23,45 @@ public class ServerFacade {
 
 
     public UserService.RegisterResult register(UserService.RegisterRequest r) {
-        return makeRequest("POST", "/user", r, UserService.RegisterResult.class);
+        return makeRequest("POST", "/user", r, null, UserService.RegisterResult.class);
     }
 
     public UserService.LoginResult login(UserService.LoginRequest r) {
-        return makeRequest("POST", "/session", r, UserService.LoginResult.class);
+        return makeRequest("POST", "/session", r, null, UserService.LoginResult.class);
     }
 
     public UserService.LogoutResult logout(UserService.LogoutRequest r) {
-        return makeRequest("DELETE", "/session", r, UserService.LogoutResult.class);
+        return makeRequest("DELETE", "/session", r, r.authToken(), UserService.LogoutResult.class);
     }
 
     public GameService.ListResult listGames(GameService.ListRequest r) {
-        return makeRequest("GET", "/game", r, GameService.ListResult.class);
+        return makeRequest("GET", "/game", r, r.authToken(), GameService.ListResult.class);
     }
 
     public GameService.CreateResult createGame(GameService.CreateRequest r) {
-        return makeRequest("POST", "/game", r, GameService.CreateResult.class);
+        return makeRequest("POST", "/game", r,r.authToken(), GameService.CreateResult.class);
     }
 
     public GameService.JoinResult joinGame(GameService.JoinRequest r) {
-        return makeRequest("PUT", "/game", r, GameService.JoinResult.class);
+        return makeRequest("PUT", "/game", r, r.authToken(), GameService.JoinResult.class);
 
     }
 
     public ClearService.ClearResult clear() {
-        return makeRequest("DELETE", "/db", null, ClearService.ClearResult.class);
+        return makeRequest("DELETE", "/db", null, null, ClearService.ClearResult.class);
 
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws HttpResponseException {
+    private <T> T makeRequest(String method, String path, Object request, String authToken, Class<T> responseClass) throws HttpResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
+
+            if (authToken != null) {
+                http.setRequestProperty("Authorization", authToken);  // ← add this
+            }
 
             writeBody(request, http);
             http.connect();
