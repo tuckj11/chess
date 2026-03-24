@@ -13,10 +13,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.net.http.HttpClient;
 
 public class ServerFacade {
-    private final HttpClient client = HttpClient.newHttpClient();
     private final String serverUrl;
 
     public ServerFacade(String url) {
@@ -49,7 +47,7 @@ public class ServerFacade {
 
     }
 
-    public ClearService.ClearResult clearGame() {
+    public ClearService.ClearResult clear() {
         return makeRequest("DELETE", "/db", null, ClearService.ClearResult.class);
 
     }
@@ -91,7 +89,7 @@ public class ServerFacade {
 
     private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
         T response = null;
-        if (http.getContentLength() < 0) {
+        if (http.getContentLength() != 0) {
             try(InputStream respBody = http.getInputStream()) {
                 InputStreamReader reader = new InputStreamReader(respBody);
                 if(responseClass != null) {
