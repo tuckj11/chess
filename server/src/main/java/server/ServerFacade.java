@@ -16,7 +16,7 @@ import java.net.URL;
 import java.net.http.HttpClient;
 
 public class ServerFacade {
-    //private static final HttpClient httpClient = HttpClient.newHttpClient();
+    private final HttpClient client = HttpClient.newHttpClient();
     private final String serverUrl;
 
     public ServerFacade(String url) {
@@ -25,30 +25,32 @@ public class ServerFacade {
 
 
     public UserService.RegisterResult register(UserService.RegisterRequest r) {
-
+        return makeRequest("POST", "/user", r, UserService.RegisterResult.class);
     }
 
     public UserService.LoginResult login(UserService.LoginRequest r) {
-
+        return makeRequest("POST", "/session", r, UserService.LoginResult.class);
     }
 
     public UserService.LogoutResult logout(UserService.LogoutRequest r) {
-
+        return makeRequest("DELETE", "/session", r, UserService.LogoutResult.class);
     }
 
     public GameService.ListResult listGames(GameService.ListRequest r) {
-
+        return makeRequest("GET", "/game", r, GameService.ListResult.class);
     }
 
     public GameService.CreateResult createGame(GameService.CreateRequest r) {
-
+        return makeRequest("POST", "/game", r, GameService.CreateResult.class);
     }
 
     public GameService.JoinResult joinGame(GameService.JoinRequest r) {
+        return makeRequest("PUT", "/game", r, GameService.JoinResult.class);
 
     }
 
     public ClearService.ClearResult clearGame() {
+        return makeRequest("DELETE", "/db", null, ClearService.ClearResult.class);
 
     }
 
