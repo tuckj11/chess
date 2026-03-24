@@ -35,7 +35,7 @@ public class ServerFacade {
     }
 
     public GameService.ListResult listGames(GameService.ListRequest r) {
-        return makeRequest("GET", "/game", r, r.authToken(), GameService.ListResult.class);
+        return makeRequest("GET", "/game", null, r.authToken(), GameService.ListResult.class);
     }
 
     public GameService.CreateResult createGame(GameService.CreateRequest r) {
