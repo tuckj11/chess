@@ -2,9 +2,8 @@ package client;
 
 import com.google.gson.Gson;
 import io.javalin.http.HttpResponseException;
-import service.UserService;
-import service.GameService;
-import service.ClearService;
+import requests.Requests;
+import results.Results;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,33 +21,33 @@ public class ServerFacade {
     }
 
 
-    public UserService.RegisterResult register(UserService.RegisterRequest r) {
-        return makeRequest("POST", "/user", r, null, UserService.RegisterResult.class);
+    public Results.RegisterResult register(Requests.RegisterRequest r) {
+        return makeRequest("POST", "/user", r, null, Results.RegisterResult.class);
     }
 
-    public UserService.LoginResult login(UserService.LoginRequest r) {
-        return makeRequest("POST", "/session", r, null, UserService.LoginResult.class);
+    public Results.LoginResult login(Requests.LoginRequest r) {
+        return makeRequest("POST", "/session", r, null, Results.LoginResult.class);
     }
 
-    public UserService.LogoutResult logout(UserService.LogoutRequest r) {
-        return makeRequest("DELETE", "/session", r, r.authToken(), UserService.LogoutResult.class);
+    public Results.LogoutResult logout(Requests.LogoutRequest r) {
+        return makeRequest("DELETE", "/session", r, r.authToken(), Results.LogoutResult.class);
     }
 
-    public GameService.ListResult listGames(GameService.ListRequest r) {
-        return makeRequest("GET", "/game", null, r.authToken(), GameService.ListResult.class);
+    public Results.ListResult listGames(Requests.ListRequest r) {
+        return makeRequest("GET", "/game", null, r.authToken(), Results.ListResult.class);
     }
 
-    public GameService.CreateResult createGame(GameService.CreateRequest r) {
-        return makeRequest("POST", "/game", r,r.authToken(), GameService.CreateResult.class);
+    public Results.CreateResult createGame(Requests.CreateRequest r) {
+        return makeRequest("POST", "/game", r,r.authToken(), Results.CreateResult.class);
     }
 
-    public GameService.JoinResult joinGame(GameService.JoinRequest r) {
-        return makeRequest("PUT", "/game", r, r.authToken(), GameService.JoinResult.class);
+    public Results.JoinResult joinGame(Requests.JoinRequest r) {
+        return makeRequest("PUT", "/game", r, r.authToken(), Results.JoinResult.class);
 
     }
 
-    public ClearService.ClearResult clear() {
-        return makeRequest("DELETE", "/db", null, null, ClearService.ClearResult.class);
+    public Results.ClearResult clear() {
+        return makeRequest("DELETE", "/db", null, null, Results.ClearResult.class);
 
     }
 

@@ -5,9 +5,9 @@ import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import model.GameData;
-import service.GameService;
-import service.UserService;
 import io.javalin.http.HttpResponseException;
+import requests.Requests;
+import results.Results;
 
 
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ public class Client {
         System.out.print("Email: ");
         String email = scan.nextLine();
         try {
-            UserService.RegisterResult res = serverFacade.register(new UserService.RegisterRequest(username, password, email));
+            Results.RegisterResult res = serverFacade.register(new Requests.RegisterRequest(username, password, email));
             authToken = res.authToken();
             System.out.println("Registered Successfully!");
             postLoginLoop();
@@ -83,7 +83,7 @@ public class Client {
         System.out.print("Password: ");
         String password = scan.nextLine();
         try {
-            UserService.LoginResult res = serverFacade.login(new UserService.LoginRequest(username, password));
+            Results.LoginResult res = serverFacade.login(new Requests.LoginRequest(username, password));
             authToken = res.authToken();
             postLoginLoop();
         }
@@ -130,7 +130,7 @@ public class Client {
 
     private boolean logout() {
         try {
-            serverFacade.logout(new UserService.LogoutRequest(authToken));
+            serverFacade.logout(new Requests.LogoutRequest(authToken));
             authToken = null;
             System.out.println("Logged out Successfully!");
             return true;
@@ -145,7 +145,7 @@ public class Client {
         System.out.print("Let's create a game. Please enter a game name: ");
         String name = scan.nextLine();
         try {
-            serverFacade.createGame(new GameService.CreateRequest(authToken, name));
+            serverFacade.createGame(new Requests.CreateRequest(authToken, name));
             System.out.println("Game successfully made! Please type List to see further details");
         }
         catch (HttpResponseException e) {
@@ -161,7 +161,7 @@ public class Client {
     private void listGames() {
         System.out.println("Let's see what games are available");
         try{
-            GameService.ListResult res = serverFacade.listGames(new GameService.ListRequest(authToken));
+            Results.ListResult res = serverFacade.listGames(new Requests.ListRequest(authToken));
             if(res.games().isEmpty()) {
                 System.out.println("There are no available games!");
                 return;
@@ -193,9 +193,9 @@ public class Client {
             int id = gameIds.get(listNumber - 1);
             System.out.println("What color did you want to play as? Please type either BLACK or WHITE!");
             String color = scan.nextLine();
-            serverFacade.joinGame(new GameService.JoinRequest(authToken, color, id));
+            serverFacade.joinGame(new Requests.JoinRequest(authToken, color, id));
             System.out.println("Successfully joined! Let's take you to the game");
-            drawBoard(color, serverFacade.listGames(new GameService.ListRequest(authToken)).games().get(listNumber - 1).game());
+            drawBoard(color, serverFacade.listGames(new Requests.ListRequest(authToken)).games().get(listNumber - 1).game());
         }
         catch (NumberFormatException e) {
             System.out.println("You did not enter just a number. Please try again!");
@@ -227,7 +227,7 @@ public class Client {
         String strId = scan.nextLine();
         try {
             int listNumber = Integer.parseInt(strId.trim());
-            ChessGame game = serverFacade.listGames(new GameService.ListRequest(authToken)).games().get(listNumber - 1).game();
+            ChessGame game = serverFacade.listGames(new Requests.ListRequest(authToken)).games().get(listNumber - 1).game();
             System.out.println("Successfully joined! Let's take you to the game");
             drawBoard("WHITE", game);
         }

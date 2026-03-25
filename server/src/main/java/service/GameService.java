@@ -6,17 +6,14 @@ import dataaccess.GameDao;
 import dataaccess.UserDao;
 import model.AuthData;
 import model.GameData;
+import requests.Requests;
+import results.Results;
+
 import java.util.ArrayList;
 
 public class GameService {
-    public record ListRequest(String authToken) {}
-    public record ListResult(ArrayList<GameData> games, String message) {}
 
-    public record CreateRequest(String authToken, String gameName) {}
-    public record CreateResult(Integer gameID, String message) {}
 
-    public record JoinRequest(String authToken, String playerColor, Integer gameID) {}
-    public record JoinResult(String message) {}
 
     final UserDao userDao;
     final GameDao gameDao;
@@ -28,14 +25,14 @@ public class GameService {
         this.authDao = authDao;
     }
 
-    public ListResult listGames(ListRequest r) {
+    public Results.ListResult listGames(Requests.ListRequest r) {
         try {
             AuthData auth = authDao.verifyAuth(r.authToken());
             if (auth == null) {
-                return new ListResult(null, "Error: unauthorized");
+                return new Results.ListResult(null, "Error: unauthorized");
             } else {
                 ArrayList<GameData> games = gameDao.getGames();
-                return new ListResult(games, null);
+                return new Results.ListResult(games, null);
             }
         }
         catch (DataAccessException e) {
@@ -43,14 +40,14 @@ public class GameService {
         }
     }
 
-    public CreateResult createGame(CreateRequest r) {
+    public Results.CreateResult createGame(Requests.CreateRequest r) {
         try {
             AuthData auth = authDao.verifyAuth(r.authToken());
             if (auth == null) {
-                return new CreateResult(null, "Error: unauthorized");
+                return new Results.CreateResult(null, "Error: unauthorized");
             } else {
                 Integer gameID = gameDao.makeGame(r.gameName());
-                return new CreateResult(gameID, null);
+                return new Results.CreateResult(gameID, null);
             }
         }
         catch (DataAccessException e) {
@@ -58,19 +55,19 @@ public class GameService {
         }
     }
 
-    public JoinResult joinGame(JoinRequest r) {
+    public Results.JoinResult joinGame(Requests.JoinRequest r) {
         try {
             AuthData auth = authDao.verifyAuth(r.authToken());
             if (auth == null) {
-                return new JoinResult("Error: unauthorized");
+                return new Results.JoinResult("Error: unauthorized");
             }
             int successfulJoin = gameDao.connectToGame(auth.username(), r.gameID(), r.playerColor());
             if (successfulJoin == 0) {
-                return new JoinResult(null);
+                return new Results.JoinResult(null);
             } else if (successfulJoin == 1) {
-                return new JoinResult("Error: Bad Request");
+                return new Results.JoinResult("Error: Bad Request");
             } else {
-                return new JoinResult("Error: Already Taken");
+                return new Results.JoinResult("Error: Already Taken");
             }
         }
         catch (DataAccessException e) {
@@ -78,11 +75,11 @@ public class GameService {
         }
     }
 
-    public CreateRequest addAuthToCreateRequest(String auth, CreateRequest r) {
-        return new CreateRequest(auth, r.gameName());
+    public Requests.CreateRequest addAuthToCreateRequest(String auth, Requests.CreateRequest r) {
+        return new Requests.CreateRequest(auth, r.gameName());
     }
 
-    public JoinRequest addAuthToJoinRequest(String auth, JoinRequest r) {
-        return new JoinRequest(auth, r.playerColor(), r.gameID());
+    public Requests.JoinRequest addAuthToJoinRequest(String auth, Requests.JoinRequest r) {
+        return new Requests.JoinRequest(auth, r.playerColor(), r.gameID());
     }
 }

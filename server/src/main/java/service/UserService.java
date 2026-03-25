@@ -6,18 +6,11 @@ import dataaccess.UserDao;
 import model.AuthData;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
+import requests.Requests;
+import results.Results;
 
 
 public class UserService {
-    public record RegisterRequest(String username, String password, String email) {}
-    public record RegisterResult(String username, String authToken, String message) {}
-
-    public record LoginRequest(String username, String password) {}
-    public record LoginResult(String username, String authToken, String message) {}
-
-    public record LogoutRequest(String authToken) {}
-    public record LogoutResult(String message) {}
-
     final UserDao userDao;
     final AuthDao authDao;
     public UserService(UserDao userDao, AuthDao authDao) {
@@ -25,47 +18,47 @@ public class UserService {
         this.authDao = authDao;
     }
 
-    public RegisterResult register(RegisterRequest r)  {
+    public Results.RegisterResult register(Requests.RegisterRequest r)  {
         try {
             UserData user = userDao.getUser(r.username());
             if (user != null) {
-                return new RegisterResult(null, null, "Error: already taken");
+                return new Results.RegisterResult(null, null, "Error: already taken");
             }
             String password = BCrypt.hashpw(r.password(), BCrypt.gensalt());
             userDao.createUser(new UserData(r.username(), password, r.email()));
             AuthData authData = authDao.createAuth(r.username());
-            return new RegisterResult(authData.username(), authData.authToken(), null);
+            return new Results.RegisterResult(authData.username(), authData.authToken(), null);
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public LoginResult login(LoginRequest r) {
+    public Results.LoginResult login(Requests.LoginRequest r) {
         try {
             UserData user = userDao.getUser(r.username());
             if (user == null) {
-                return new LoginResult(null, null, "Error: unauthorized");
+                return new Results.LoginResult(null, null, "Error: unauthorized");
             }
             if (!BCrypt.checkpw(r.password(), user.password())) {
                 System.out.println(user.password());
-                return new LoginResult(null, null, "Error: unauthorized");
+                return new Results.LoginResult(null, null, "Error: unauthorized");
             }
             AuthData authData = authDao.createAuth(r.username());
-            return new LoginResult(authData.username(), authData.authToken(), null);
+            return new Results.LoginResult(authData.username(), authData.authToken(), null);
         }
         catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public LogoutResult logout(LogoutRequest r) {
+    public Results.LogoutResult logout(Requests.LogoutRequest r) {
         try {
             AuthData auth = authDao.verifyAuth(r.authToken());
             if (auth == null) {
-                return new LogoutResult("Error: unauthorized");
+                return new Results.LogoutResult("Error: unauthorized");
             }
             authDao.deleteAuth(auth);
-            return new LogoutResult(null);
+            return new Results.LogoutResult(null);
         }
         catch (DataAccessException e){
             throw new RuntimeException(e);

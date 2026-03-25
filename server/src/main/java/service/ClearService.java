@@ -5,9 +5,9 @@ import dataaccess.AuthDao;
 import dataaccess.DataAccessException;
 import dataaccess.GameDao;
 import dataaccess.UserDao;
+import results.Results;
 
 public class ClearService {
-    public record ClearResult(String message) {}
 
     final UserDao userDao;
     final GameDao gameDao;
@@ -19,12 +19,12 @@ public class ClearService {
         this.authDao = authDao;
     }
 
-    public ClearResult clear() {
+    public Results.ClearResult clear() {
         try {
             userDao.clear();
             gameDao.clear();
             authDao.clear();
-            return new ClearResult(null);
+            return new Results.ClearResult(null);
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
