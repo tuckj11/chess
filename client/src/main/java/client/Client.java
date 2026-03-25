@@ -1,5 +1,9 @@
 package client;
 
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import model.GameData;
 import server.ServerFacade;
 import service.GameService;
@@ -15,7 +19,7 @@ public class Client {
     private final ServerFacade serverFacade;
     private final Scanner scan;
     private String authToken;
-    private List<Integer> gameIds = new ArrayList<>();
+    private final List<Integer> gameIds = new ArrayList<>();
 
     public Client() {
         serverFacade = new ServerFacade("http://localhost:8080");
@@ -182,12 +186,13 @@ public class Client {
         System.out.print("What game number do you want to join?");
         String strId = scan.nextLine();
         try {
-            int id = Integer.parseInt(strId.trim());
-            id = gameIds.get(id - 1);
+            int listNumber = Integer.parseInt(strId.trim());
+            int id = gameIds.get(listNumber - 1);
             System.out.println("What color did you want to play as? Please type either BLACK or WHITE!");
             String color = scan.nextLine();
-            GameService.JoinResult res = serverFacade.joinGame(new GameService.JoinRequest(authToken, color, id));
+            serverFacade.joinGame(new GameService.JoinRequest(authToken, color, id));
             System.out.println("Successfully joined! Let's take you to the game");
+            drawBoard(color, serverFacade.listGames(new GameService.ListRequest(authToken)).games().get(listNumber - 1).game());
         }
         catch (NumberFormatException e) {
             System.out.println("You did not enter just a number. Please try again!");
@@ -216,5 +221,36 @@ public class Client {
 
     private void postLoginHelp() {
         System.out.println("Here are your possible commands\ncreate - create a new game\nlist - list current games\njoin - join a game\nobserve - observe a game\nlogout - logout of account\nhelp - see possible commands");
+    }
+
+    private void drawBoard(String color, ChessGame game) {
+        ChessBoard board = game.getBoard();
+        System.out.println("  a b c d e f g h");
+        for (int row = 8; row >= 1; row--) {
+            System.out.print(row + " ");
+            for (int col = 1; col <= 8; col++) {
+                ChessPosition pos = new ChessPosition(row, col);
+                ChessPiece piece = board.getPiece(pos);
+
+                boolean isLight = (row + col) % 2 == 0;
+                String bg = isLight ? "\u001B[47m" : "\u001B[100m";
+                String text = piece == null ? "  " : getPieceSymbol(piece) + " ";
+
+                System.out.print(bg + text + "\u001B[0m");
+            }
+            System.out.println(" " + row);
+        }
+        System.out.println("  a b c d e f g h");
+    }
+
+    private String getPieceSymbol(ChessPiece piece) {
+        return switch (piece.getPieceType()) {
+            case KING ->   piece.getTeamColor() == ChessGame.TeamColor.WHITE ? "♔" : "♚";
+            case QUEEN ->  piece.getTeamColor() == ChessGame.TeamColor.WHITE ? "♕" : "♛";
+            case ROOK ->   piece.getTeamColor() == ChessGame.TeamColor.WHITE ? "♖" : "♜";
+            case BISHOP -> piece.getTeamColor() == ChessGame.TeamColor.WHITE ? "♗" : "♝";
+            case KNIGHT -> piece.getTeamColor() == ChessGame.TeamColor.WHITE ? "♘" : "♞";
+            case PAWN ->   piece.getTeamColor() == ChessGame.TeamColor.WHITE ? "♙" : "♟";
+        };
     }
 }
