@@ -163,6 +163,10 @@ public class Client {
         System.out.println("Let's see what games are available");
         try{
             GameService.ListResult res = serverFacade.listGames(new GameService.ListRequest(authToken));
+            if(res.games().isEmpty()) {
+                System.out.println("There are no available games!");
+                return;
+            }
             gameIds.clear();
             int i = 1;
             for(GameData game: res.games()) {
