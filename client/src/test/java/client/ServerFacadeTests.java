@@ -1,7 +1,7 @@
 
 import org.junit.jupiter.api.*;
 import server.Server;
-import server.ServerFacade;
+import client.ServerFacade;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
