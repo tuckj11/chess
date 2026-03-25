@@ -12,4 +12,8 @@ public class Client {
         serverFacade = new ServerFacade("http://localhost:8080");
         scan = new Scanner(System.in);
     }
+
+    public void run() {
+
+    }
 }
