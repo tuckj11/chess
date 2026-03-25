@@ -101,7 +101,11 @@ public class Client {
         while(true) {
             String input = scan.nextLine().trim().toLowerCase();
             switch (input) {
-                case "logout" -> logout();
+                case "logout" -> {
+                    if (logout()) {
+                        return;
+                    }
+                }
                 case "create" -> createGame();
                 case "list" -> listGames();
                 case "join" -> joinGame();
@@ -115,8 +119,17 @@ public class Client {
         }
     }
 
-    private void logout() {
-
+    private boolean logout() {
+        try {
+            serverFacade.logout(new UserService.LogoutRequest(authToken));
+            authToken = null;
+            System.out.println("Logged out Successfully!");
+            return true;
+        }
+        catch (HttpResponseException e) {
+            System.out.println("Something went wrong! Please try again!");
+            return false;
+        }
     }
 
     private void createGame() {
@@ -136,6 +149,6 @@ public class Client {
     }
 
     private void postLoginHelp() {
-
+        System.out.println("Here are your possible commands\ncreate - create a new game\nlist - list current games\njoin - join a game\nobserve - observe a game\nlogout - logout of account\nhelp - see possible commands");
     }
 }
