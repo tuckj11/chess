@@ -32,10 +32,10 @@ public class Client {
                 case "quit" -> {
                      return;
                 }
-                case "help" -> help();
+                case "help" -> preLoginHelp();
                 default -> {
                     System.out.println("Sorry that is an unrecognized command. Please try one of the following");
-                    help();
+                    preLoginHelp();
                 }
             }
         }
@@ -92,11 +92,50 @@ public class Client {
         }
     }
 
-    private void help() {
+    private void preLoginHelp() {
         System.out.println("Here are your possible commands\nregister - register a new account\nlogin - login to existing account\nquit - quit the client\nhelp - view your options");
     }
 
     private void postLoginLoop() {
+        System.out.println("Congrats on getting logged in. Type Help for more options");
+        while(true) {
+            String input = scan.nextLine().trim().toLowerCase();
+            switch (input) {
+                case "logout" -> logout();
+                case "create" -> createGame();
+                case "list" -> listGames();
+                case "join" -> joinGame();
+                case "observe" -> observeGame();
+                case "help" -> postLoginHelp();
+                default -> {
+                    System.out.println("Sorry that is an unrecognized command. Please try one of the following");
+                    postLoginHelp();
+                }
+            }
+        }
+    }
+
+    private void logout() {
+
+    }
+
+    private void createGame() {
+
+    }
+
+    private void listGames() {
+
+    }
+
+    private void joinGame() {
+
+    }
+
+    private void observeGame() {
+
+    }
+
+    private void postLoginHelp() {
 
     }
 }
