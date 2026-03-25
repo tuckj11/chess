@@ -163,9 +163,10 @@ public class Client {
             int i = 1;
             for(GameData game: res.games()) {
                 gameIds.add(game.gameID());
-                System.out.println(i + ". " + game.gameName());
+                System.out.println(i + ". " + game.gameName() + " White Player: " + game.whiteUsername() + " Black Player: " + game.blackUsername());
                   i++;
             }
+
         }
         catch (HttpResponseException e) {
             System.out.println("Something went wrong! Please try again");
