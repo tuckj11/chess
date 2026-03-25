@@ -224,25 +224,36 @@ public class Client {
     }
 
     private void drawBoard(String color, ChessGame game) {
+        ChessBoard board = game.getBoard();
         if (color.equals("WHITE")) {
-            ChessBoard board = game.getBoard();
             System.out.println("  a b c d e f g h");
             for (int row = 8; row >= 1; row--) {
-                System.out.print(row + " ");
-                for (int col = 1; col <= 8; col++) {
-                    ChessPosition pos = new ChessPosition(row, col);
-                    ChessPiece piece = board.getPiece(pos);
-
-                    boolean isLight = (row + col) % 2 == 0;
-                    String bg = isLight ? "\u001B[47m" : "\u001B[100m";
-                    String text = piece == null ? "  " : getPieceSymbol(piece);
-
-                    System.out.print(bg + text + "\u001B[0m");
-                }
-                System.out.println(" " + row);
+                fillInPieces(board, row);
             }
             System.out.println("  a b c d e f g h");
         }
+        else {
+            System.out.println("  h g f e d c b a");
+            for (int row = 0; row < 8; row++) {
+                fillInPieces(board, row);
+            }
+            System.out.println(" h g f e d c b a");
+        }
+    }
+
+    private void fillInPieces(ChessBoard board, int row) {
+        System.out.print(row + " ");
+        for (int col = 1; col <= 8; col++) {
+            ChessPosition pos = new ChessPosition(row, col);
+            ChessPiece piece = board.getPiece(pos);
+
+            boolean isLight = (row + col) % 2 == 0;
+            String bg = isLight ? "\u001B[47m" : "\u001B[100m";
+            String text = piece == null ? "  " : getPieceSymbol(piece);
+
+            System.out.print(bg + text + "\u001B[0m");
+        }
+        System.out.println(" " + row);
     }
 
     private String getPieceSymbol(ChessPiece piece) {
