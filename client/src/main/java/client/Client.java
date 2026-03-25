@@ -2,6 +2,8 @@ package client;
 
 import server.ServerFacade;
 import service.UserService;
+import io.javalin.http.HttpResponseException;
+
 
 import java.util.Scanner;
 
@@ -47,9 +49,23 @@ public class Client {
         String password = scan.nextLine();
         System.out.print("Email: ");
         String email = scan.nextLine();
-        UserService.RegisterResult res = serverFacade.register(new UserService.RegisterRequest(username, password, email));
-        authToken = res.authToken();
-        postLoginLoop();
+        try {
+            UserService.RegisterResult res = serverFacade.register(new UserService.RegisterRequest(username, password, email));
+            authToken = res.authToken();
+            System.out.println("Registered Successfully!");
+            postLoginLoop();
+        }
+        catch (HttpResponseException e) {
+            if(e.getStatus() == 403) {
+                System.out.println("Username is already taken. Please try again");
+            }
+            else if(e.getStatus() == 400) {
+                System.out.println("Invalid registration details. Please try again");
+            }
+            else {
+                System.out.println("Something went wrong, please try again.");
+            }
+        }
     }
 
     private void login() {
