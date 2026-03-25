@@ -1,6 +1,7 @@
 package client;
 
 import server.ServerFacade;
+import service.GameService;
 import service.UserService;
 import io.javalin.http.HttpResponseException;
 
@@ -133,7 +134,20 @@ public class Client {
     }
 
     private void createGame() {
-
+        System.out.print("Let's create a game. Please enter a game name:");
+        String name = scan.nextLine();
+        try {
+            serverFacade.createGame(new GameService.CreateRequest(authToken, name));
+            System.out.println("Game successfully made! Please type List to see further details");
+        }
+        catch (HttpResponseException e) {
+            if (e.getStatus() == 400) {
+                System.out.println("Invalid create details. Please try again");
+            }
+            else {
+                System.out.println("Something went wrong! Please try again later!");
+            }
+        }
     }
 
     private void listGames() {
