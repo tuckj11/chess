@@ -1,12 +1,14 @@
 package client;
 
 import server.ServerFacade;
+import service.UserService;
 
 import java.util.Scanner;
 
 public class Client {
     private final ServerFacade serverFacade;
     private final Scanner scan;
+    private String authToken;
 
     public Client() {
         serverFacade = new ServerFacade("http://localhost:8080");
@@ -25,7 +27,9 @@ public class Client {
             switch (input) {
                 case "register" -> register();
                 case "login" -> login();
-                case "quit" -> quit();
+                case "quit" -> {
+                     return;
+                }
                 case "help" -> help();
                 default -> {
                     System.out.println("Sorry that is an unrecognized command. Please try one of the following");
@@ -36,18 +40,27 @@ public class Client {
     }
 
     private void register() {
-
+        System.out.println("Let's get you registered. Please enter the following");
+        System.out.print("Username: ");
+        String username = scan.nextLine();
+        System.out.print("Password: ");
+        String password = scan.nextLine();
+        System.out.print("Email: ");
+        String email = scan.nextLine();
+        UserService.RegisterResult res = serverFacade.register(new UserService.RegisterRequest(username, password, email));
+        authToken = res.authToken();
+        postLoginLoop();
     }
 
     private void login() {
 
     }
 
-    private void quit() {
+    private void help() {
 
     }
 
-    private void help() {
+    private void postLoginLoop() {
 
     }
 }
