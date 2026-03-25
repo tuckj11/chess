@@ -100,7 +100,12 @@ public class Client {
     }
 
     private void preLoginHelp() {
-        System.out.println("Here are your possible commands\nregister - register a new account\nlogin - login to existing account\nquit - quit the client\nhelp - view your options");
+        System.out.println("""
+                Here are your possible commands
+                register - register a new account
+                login - login to existing account
+                quit - quit the client
+                help - view your options""");
     }
 
     private void postLoginLoop() {
@@ -243,7 +248,14 @@ public class Client {
     }
 
     private void postLoginHelp() {
-        System.out.println("Here are your possible commands\ncreate - create a new game\nlist - list current games\njoin - join a game\nobserve - observe a game\nlogout - logout of account\nhelp - see possible commands");
+        System.out.println("""
+            Here are your possible commands
+            create - create a new game
+            list - list current games
+            join - join a game
+            observe - observe a game
+            logout - logout of account
+            help - see possible commands""");
     }
 
     private void drawBoard(String color, ChessGame game) {

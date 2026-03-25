@@ -38,7 +38,8 @@ public class ServerFacadeTests {
     @DisplayName("Registration Negative")
     public void registerFailure() {
         serverFacade.register(new Requests.RegisterRequest("username", "password", "email"));
-        Exception e = Assertions.assertThrows(Exception.class, () -> serverFacade.register(new Requests.RegisterRequest("username", "password", "email")));
+        Exception e = Assertions.assertThrows(Exception.class, () ->
+                serverFacade.register(new Requests.RegisterRequest("username", "password", "email")));
         Assertions.assertTrue(e.getMessage().contains("403"));
     }
 
@@ -182,7 +183,8 @@ public class ServerFacadeTests {
         serverFacade.register(new Requests.RegisterRequest("username2", "password2", "email2"));
         Results.LoginResult log2 = serverFacade.login(new Requests.LoginRequest("username2", "password2"));
 
-        Exception e3 = Assertions.assertThrows(Exception.class, () -> serverFacade.joinGame(new Requests.JoinRequest(log2.authToken(), "WHITE", g1.gameID())));
+        Exception e3 = Assertions.assertThrows(Exception.class, () ->
+                serverFacade.joinGame(new Requests.JoinRequest(log2.authToken(), "WHITE", g1.gameID())));
         Assertions.assertTrue(e3.getMessage().contains("403"));
     }
 
