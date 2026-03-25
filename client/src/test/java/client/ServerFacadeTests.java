@@ -1,9 +1,9 @@
+package client;
 
 import org.junit.jupiter.api.*;
 import requests.Requests;
 import results.Results;
 import server.Server;
-import client.ServerFacade;
 
 public class ServerFacadeTests {
 
