@@ -64,7 +64,7 @@ public class Client {
     }
 
     private void help() {
-
+        System.out.println("Here are your possible commands\nregister - register a new account\nlogin - login to existing account\nquit - quit the client\nhelp - view your options");
     }
 
     private void postLoginLoop() {
