@@ -216,6 +216,27 @@ public class Client {
     }
 
     private void observeGame() {
+        if(gameIds.isEmpty()) {
+            System.out.println("There are no games available or you have not typed List yet");
+            return;
+        }
+        System.out.print("Let's observe a game! What game number did you want to observe: ");
+        String strId = scan.nextLine();
+        try {
+            int listNumber = Integer.parseInt(strId.trim());
+            ChessGame game = serverFacade.listGames(new GameService.ListRequest(authToken)).games().get(listNumber - 1).game();
+            System.out.println("Successfully joined! Let's take you to the game");
+            drawBoard("WHITE", game);
+        }
+        catch (NumberFormatException e) {
+            System.out.println("You did not enter just a number. Please try again!");
+        }
+        catch (IndexOutOfBoundsException e) {
+            System.out.println("Invalid game number. Please run list again.");
+        }
+        catch (HttpResponseException e) {
+            System.out.println("Something went wrong! Please try again.");
+        }
 
     }
 
