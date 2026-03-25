@@ -1,7 +1,6 @@
 package client;
 
 import com.google.gson.Gson;
-import io.javalin.http.HttpResponseException;
 import requests.Requests;
 import results.Results;
 
@@ -51,7 +50,7 @@ public class ServerFacade {
 
     }
 
-    private <T> T makeRequest(String method, String path, Object request, String authToken, Class<T> responseClass) throws HttpResponseException {
+    private <T> T makeRequest(String method, String path, Object request, String authToken, Class<T> responseClass) {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
@@ -68,7 +67,7 @@ public class ServerFacade {
             return readBody(http, responseClass);
 
         } catch (Exception e) {
-            throw new HttpResponseException(500, e.getMessage());
+            throw new ResponseException(500, e.getMessage());
         }
     }
 
@@ -82,10 +81,10 @@ public class ServerFacade {
         }
     }
 
-    private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, HttpResponseException {
+    private void throwIfNotSuccessful(HttpURLConnection http) throws IOException {
         var status = http.getResponseCode();
         if (!isSuccessful(status)) {
-            throw new HttpResponseException(status, "failure: " + status);
+            throw new ResponseException(status, "failure: " + status);
         }
 
     }

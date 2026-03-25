@@ -5,7 +5,6 @@ import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import model.GameData;
-import io.javalin.http.HttpResponseException;
 import requests.Requests;
 import results.Results;
 
@@ -63,7 +62,7 @@ public class Client {
             System.out.println("Registered Successfully!");
             postLoginLoop();
         }
-        catch (HttpResponseException e) {
+        catch (ResponseException e) {
             if(e.getStatus() == 403) {
                 System.out.println("Username is already taken. Please try again");
             }
@@ -87,7 +86,7 @@ public class Client {
             authToken = res.authToken();
             postLoginLoop();
         }
-        catch (HttpResponseException e) {
+        catch (ResponseException e) {
             if (e.getStatus() == 400) {
                 System.out.println("Invalid login details. Please try again");
             }
@@ -135,7 +134,7 @@ public class Client {
             System.out.println("Logged out Successfully!");
             return true;
         }
-        catch (HttpResponseException e) {
+        catch (ResponseException e) {
             System.out.println("Something went wrong! Please try again!");
             return false;
         }
@@ -148,7 +147,7 @@ public class Client {
             serverFacade.createGame(new Requests.CreateRequest(authToken, name));
             System.out.println("Game successfully made! Please type List to see further details");
         }
-        catch (HttpResponseException e) {
+        catch (ResponseException e) {
             if (e.getStatus() == 400) {
                 System.out.println("Invalid create details. Please try again");
             }
@@ -175,7 +174,7 @@ public class Client {
             }
 
         }
-        catch (HttpResponseException e) {
+        catch (ResponseException e) {
             System.out.println("Something went wrong! Please try again");
         }
     }
@@ -203,7 +202,7 @@ public class Client {
         catch (IndexOutOfBoundsException e) {
             System.out.println("Invalid game number. Please run list again.");
         }
-        catch (HttpResponseException e) {
+        catch (ResponseException e) {
             if (e.getStatus() == 400) {
                 System.out.println("Invalid join details. Please try again");
             }
@@ -237,7 +236,7 @@ public class Client {
         catch (IndexOutOfBoundsException e) {
             System.out.println("Invalid game number. Please run list again.");
         }
-        catch (HttpResponseException e) {
+        catch (ResponseException e) {
             System.out.println("Something went wrong! Please try again.");
         }
 
