@@ -53,7 +53,14 @@ public class Client {
     }
 
     private void login() {
-
+        System.out.println("Let's get you logged in. Please enter the following");
+        System.out.print("Username: ");
+        String username = scan.nextLine();
+        System.out.print("Password: ");
+        String password = scan.nextLine();
+        UserService.LoginResult res = serverFacade.login(new UserService.LoginRequest(username, password));
+        authToken = res.authToken();
+        postLoginLoop();
     }
 
     private void help() {
