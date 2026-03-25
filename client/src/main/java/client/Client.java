@@ -228,26 +228,30 @@ public class Client {
         if (color.equals("WHITE")) {
             System.out.println("  a b c d e f g h");
             for (int row = 8; row >= 1; row--) {
-                fillInPieces(board, row);
+                fillInPieces(board, row, false);
             }
             System.out.println("  a b c d e f g h");
         }
         else {
             System.out.println("  h g f e d c b a");
-            for (int row = 0; row < 8; row++) {
-                fillInPieces(board, row);
+            for (int row = 1; row <= 8; row++) {
+                fillInPieces(board, row, true);
             }
             System.out.println(" h g f e d c b a");
         }
     }
 
-    private void fillInPieces(ChessBoard board, int row) {
+    private void fillInPieces(ChessBoard board, int row, boolean isBlack) {
         System.out.print(row + " ");
-        for (int col = 1; col <= 8; col++) {
+        int colStart = isBlack ? 8 : 1;
+        int colEnd = isBlack ? 1 : 8;
+        int colStep = isBlack ? -1 : 1;
+
+        for (int col = colStart; col != colEnd + colStep; col += colStep) {
             ChessPosition pos = new ChessPosition(row, col);
             ChessPiece piece = board.getPiece(pos);
 
-            boolean isLight = (row + col) % 2 == 0;
+            boolean isLight = (row + col) % 2 != 0;
             String bg = isLight ? "\u001B[47m" : "\u001B[100m";
             String text = piece == null ? "  " : getPieceSymbol(piece);
 
