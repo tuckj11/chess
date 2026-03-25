@@ -74,9 +74,22 @@ public class Client {
         String username = scan.nextLine();
         System.out.print("Password: ");
         String password = scan.nextLine();
-        UserService.LoginResult res = serverFacade.login(new UserService.LoginRequest(username, password));
-        authToken = res.authToken();
-        postLoginLoop();
+        try {
+            UserService.LoginResult res = serverFacade.login(new UserService.LoginRequest(username, password));
+            authToken = res.authToken();
+            postLoginLoop();
+        }
+        catch (HttpResponseException e) {
+            if (e.getStatus() == 400) {
+                System.out.println("Invalid login details. Please try again");
+            }
+            if (e.getStatus() == 401) {
+                System.out.println("Either your username or password is invalid. Please try again!");
+            }
+            else {
+                System.out.println("Something went wrong, please try again.");
+            }
+        }
     }
 
     private void help() {
