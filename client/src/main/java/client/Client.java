@@ -143,7 +143,7 @@ public class Client {
     }
 
     private void createGame() {
-        System.out.print("Let's create a game. Please enter a game name:");
+        System.out.print("Let's create a game. Please enter a game name: ");
         String name = scan.nextLine();
         try {
             serverFacade.createGame(new GameService.CreateRequest(authToken, name));
@@ -183,7 +183,7 @@ public class Client {
             return;
         }
         System.out.println("Let's help you join a game. Please enter the following information");
-        System.out.print("What game number do you want to join?");
+        System.out.print("What game number do you want to join? ");
         String strId = scan.nextLine();
         try {
             int listNumber = Integer.parseInt(strId.trim());
@@ -224,33 +224,37 @@ public class Client {
     }
 
     private void drawBoard(String color, ChessGame game) {
-        ChessBoard board = game.getBoard();
-        System.out.println("  a b c d e f g h");
-        for (int row = 8; row >= 1; row--) {
-            System.out.print(row + " ");
-            for (int col = 1; col <= 8; col++) {
-                ChessPosition pos = new ChessPosition(row, col);
-                ChessPiece piece = board.getPiece(pos);
+        if (color.equals("WHITE")) {
+            ChessBoard board = game.getBoard();
+            System.out.println("  a b c d e f g h");
+            for (int row = 8; row >= 1; row--) {
+                System.out.print(row + " ");
+                for (int col = 1; col <= 8; col++) {
+                    ChessPosition pos = new ChessPosition(row, col);
+                    ChessPiece piece = board.getPiece(pos);
 
-                boolean isLight = (row + col) % 2 == 0;
-                String bg = isLight ? "\u001B[47m" : "\u001B[100m";
-                String text = piece == null ? "  " : getPieceSymbol(piece) + " ";
+                    boolean isLight = (row + col) % 2 == 0;
+                    String bg = isLight ? "\u001B[47m" : "\u001B[100m";
+                    String text = piece == null ? "  " : getPieceSymbol(piece);
 
-                System.out.print(bg + text + "\u001B[0m");
+                    System.out.print(bg + text + "\u001B[0m");
+                }
+                System.out.println(" " + row);
             }
-            System.out.println(" " + row);
+            System.out.println("  a b c d e f g h");
         }
-        System.out.println("  a b c d e f g h");
     }
 
     private String getPieceSymbol(ChessPiece piece) {
-        return switch (piece.getPieceType()) {
-            case KING ->   piece.getTeamColor() == ChessGame.TeamColor.WHITE ? "♔" : "♚";
-            case QUEEN ->  piece.getTeamColor() == ChessGame.TeamColor.WHITE ? "♕" : "♛";
-            case ROOK ->   piece.getTeamColor() == ChessGame.TeamColor.WHITE ? "♖" : "♜";
-            case BISHOP -> piece.getTeamColor() == ChessGame.TeamColor.WHITE ? "♗" : "♝";
-            case KNIGHT -> piece.getTeamColor() == ChessGame.TeamColor.WHITE ? "♘" : "♞";
-            case PAWN ->   piece.getTeamColor() == ChessGame.TeamColor.WHITE ? "♙" : "♟";
+        String color = piece.getTeamColor() == ChessGame.TeamColor.WHITE ? "\u001B[97m" : "\u001B[34m";
+        String letter = switch (piece.getPieceType()) {
+            case KING ->   "K";
+            case QUEEN ->  "Q";
+            case ROOK ->   "R";
+            case BISHOP -> "B";
+            case KNIGHT -> "N";
+            case PAWN ->   "P";
         };
+        return color + letter + " \u001B[0m";
     }
 }
