@@ -1,17 +1,21 @@
 package client;
 
+import model.GameData;
 import server.ServerFacade;
 import service.GameService;
 import service.UserService;
 import io.javalin.http.HttpResponseException;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Client {
     private final ServerFacade serverFacade;
     private final Scanner scan;
     private String authToken;
+    private List<Integer> gameIds = new ArrayList<>();
 
     public Client() {
         serverFacade = new ServerFacade("http://localhost:8080");
@@ -24,8 +28,8 @@ public class Client {
     }
 
     private void preLoginLoop() {
-        System.out.println("Type Help to see your options.");
         while(true) {
+            System.out.println("Type Help to see your options.");
             String input = scan.nextLine().trim().toLowerCase();
             switch (input) {
                 case "register" -> register();
@@ -98,8 +102,9 @@ public class Client {
     }
 
     private void postLoginLoop() {
-        System.out.println("Congrats on getting logged in. Type Help for more options");
+        System.out.println("Congrats on getting logged in.");
         while(true) {
+            System.out.println("Type Help for more options.");
             String input = scan.nextLine().trim().toLowerCase();
             switch (input) {
                 case "logout" -> {
@@ -151,10 +156,56 @@ public class Client {
     }
 
     private void listGames() {
-
+        System.out.println("Let's see what games are available");
+        try{
+            GameService.ListResult res = serverFacade.listGames(new GameService.ListRequest(authToken));
+            gameIds.clear();
+            int i = 1;
+            for(GameData game: res.games()) {
+                gameIds.add(game.gameID());
+                System.out.println(i + ". " + game.gameName());
+                  i++;
+            }
+        }
+        catch (HttpResponseException e) {
+            System.out.println("Something went wrong! Please try again");
+        }
     }
 
     private void joinGame() {
+        if(gameIds.isEmpty()) {
+            System.out.println("There are no games available or you have not typed List yet");
+            return;
+        }
+        System.out.println("Let's help you join a game. Please enter the following information");
+        System.out.print("What game number do you want to join?");
+        String strId = scan.nextLine();
+        try {
+            int id = Integer.parseInt(strId.trim());
+            id = gameIds.get(id - 1);
+            System.out.println("What color did you want to play as? Please type either BLACK or WHITE!");
+            String color = scan.nextLine();
+            GameService.JoinResult res = serverFacade.joinGame(new GameService.JoinRequest(authToken, color, id));
+            System.out.println("Successfully joined! Let's take you to the game");
+        }
+        catch (NumberFormatException e) {
+            System.out.println("You did not enter just a number. Please try again!");
+        }
+        catch (IndexOutOfBoundsException e) {
+            System.out.println("Invalid game number. Please run list again.");
+        }
+        catch (HttpResponseException e) {
+            if (e.getStatus() == 400) {
+                System.out.println("Invalid join details. Please try again");
+            }
+            else if(e.getStatus() == 403) {
+                System.out.println("That color is already taken! Please try again.");
+            }
+            else {
+                System.out.println("Something went wrong! Please try again.");
+            }
+        }
+
 
     }
 
