@@ -65,10 +65,9 @@ public class UserService {
         }
     }
 
-    public Boolean verifyAuth(String authToken) {
+    public AuthData verifyAuth(String authToken) {
         try {
-            AuthData auth = authDao.verifyAuth(authToken);
-            return auth != null;
+            return authDao.verifyAuth(authToken);
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }

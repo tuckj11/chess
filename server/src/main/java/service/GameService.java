@@ -76,10 +76,9 @@ public class GameService {
         }
     }
 
-    public ChessGame getGame(int gameID) {
+    public GameData getGame(int gameID) {
         try {
-            GameData data = gameDao.getGame(gameID);
-            return data.game();
+            return gameDao.getGame(gameID);
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }

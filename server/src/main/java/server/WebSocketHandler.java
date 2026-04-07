@@ -2,6 +2,8 @@ package server;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import io.javalin.websocket.*;
+import model.AuthData;
+import model.GameData;
 import org.jetbrains.annotations.NotNull;
 import service.GameService;
 import service.UserService;
@@ -54,15 +56,31 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     public void handleConnectCommand(WsContext ctx, UserGameCommand command) {
-        int gameID = command.getGameID();
-        String authToken = command.getAuthToken();
-        if(!userService.verifyAuth(authToken)) {
-            ctx.send("Error: " + "unauthorized");
-            return;
+        try {
+            int gameID = command.getGameID();
+            String authToken = command.getAuthToken();
+            AuthData auth = userService.verifyAuth(authToken);
+            if (auth == null) {
+                sendError(ctx, "Error: Unauthorized");
+                return;
+            }
+            GameData game = gameService.getGame(gameID);
+            gameSessions.computeIfAbsent(gameID, k -> ConcurrentHashMap.newKeySet()).add(ctx);
+            sendLoadGame(ctx, game.game());
+
+            String username = auth.username();
+            String color;
+            if (username.equals(game.whiteUsername())) {
+                color = "white";
+            } else if (username.equals(game.blackUsername())) {
+                color = "black";
+            } else {
+                color = "observer";
+            }
+            broadcastToOthers(gameID, ctx, username + "joined as " + color);
+        } catch (Exception e) {
+            sendError(ctx, e.getMessage());
         }
-        ChessGame game = gameService.getGame(gameID);
-        gameSessions.computeIfAbsent(gameID, k -> ConcurrentHashMap.newKeySet()).add(ctx);
-        ctx.send(gson.toJson(new LoadGameMessage(game)));
     }
 
     private void broadcastToGame(int gameId, String message) {
