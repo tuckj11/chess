@@ -338,6 +338,7 @@ public class Client {
                     ws.leave();
                     return;
                 }
+                case "highlight" -> highlight(ws);
                 case "help" -> observeHelp();
                 default -> {
                     System.out.println("Sorry that is an unrecognized command. Please try one of the following");
@@ -352,6 +353,7 @@ public class Client {
             Here are your possible commands
             redraw - redraw the chess board
             leave - leave the current game
+            highlight - see possible moves for a given piece
             help - see possible commands""");
     }
 
