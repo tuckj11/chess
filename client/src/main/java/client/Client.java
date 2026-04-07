@@ -270,7 +270,7 @@ public class Client {
                     ws.leave();
                     return;
                 }
-                case "move" -> movePiece();
+                case "move" -> movePiece(ws);
                 case "resign" -> resign();
                 case "highlight" -> highlight(ws);
                 case "help" -> gameHelp();
@@ -282,8 +282,15 @@ public class Client {
         }
     }
 
-    private void movePiece() {
-
+    private void movePiece(WebSocketClient ws) {
+        System.out.println("Lets move a piece");
+        System.out.println("What piece do you want to move? Type the square. e.g. a3");
+        String startPos = scan.nextLine();
+        System.out.println("Where do you want to move it to? Type the square. e.g. a4");
+        String endPos = scan.nextLine();
+        System.out.println("What do you want to promote to? Type the piece e.g. BISHOP. Leave blank if n.a.");
+        String promotionPiece = scan.nextLine();
+        ws.makeMove(startPos, endPos, promotionPiece);
     }
 
     private void resign() {
