@@ -113,6 +113,10 @@ public class ChessGame {
         }
     }
 
+    public void resign() {
+        turn = null;
+    }
+
     /**
      * Determines if the given team is in check
      *

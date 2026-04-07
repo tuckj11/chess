@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import io.javalin.websocket.*;
 import model.AuthData;
 import model.GameData;
+import org.eclipse.jetty.server.Authentication;
 import org.jetbrains.annotations.NotNull;
 import service.GameService;
 import service.UserService;
@@ -44,7 +45,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 case CONNECT -> handleConnectCommand(ctx, command);
                 case MAKE_MOVE -> handleMove(ctx, gson.fromJson(ctx.message(), MakeMoveCommand.class));
                 case LEAVE -> handleLeave(ctx, command);
-                //case RESIGN -> handleResign(ctx, command);
+                case RESIGN -> handleResign(ctx, command);
             }
         }
         catch (Exception e) {
@@ -145,6 +146,38 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             sendError(ctx, e.getMessage());
         }
 
+    }
+
+    public void handleResign(WsContext ctx, UserGameCommand command) {
+        try {
+            int gameID = command.getGameID();
+            String authToken = command.getAuthToken();
+            AuthData auth = userService.verifyAuth(authToken);
+            if (auth == null) {
+                sendError(ctx, "Error: Unauthorized");
+                return;
+            }
+
+            GameData game = gameService.getGame(gameID);
+            String username = auth.username();
+            String color;
+            if (username.equals(game.whiteUsername())) {
+                color = "WHITE";
+                game.game().resign();
+            } else if (username.equals(game.blackUsername())){
+                color = "BLACK";
+                game.game().resign();
+            }
+            else {
+                sendError(ctx, "You are not a player!");
+                return;
+            }
+
+            gameService.makeMove(gameID, game.game());
+            broadcastToGame(gameID, username + " (" + color + ") resigned!");
+        } catch (Exception e) {
+            sendError(ctx, e.getMessage());
+        }
     }
 
     public void handleLeave(WsContext ctx, UserGameCommand command) {
