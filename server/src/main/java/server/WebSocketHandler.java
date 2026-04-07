@@ -1,4 +1,5 @@
 package server;
+import chess.ChessGame;
 import com.google.gson.Gson;
 import io.javalin.websocket.*;
 import org.jetbrains.annotations.NotNull;
@@ -50,13 +51,14 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     public void handleConnectCommand(WsContext ctx, UserGameCommand command) {
-        int gameId = command.getGameID();
+        int gameID = command.getGameID();
         String authToken = command.getAuthToken();
         if(!userService.verifyAuth(authToken)) {
             ctx.send("Error: " + "unauthorized");
             return;
         }
-        gameSessions.computeIfAbsent(gameId, k -> ConcurrentHashMap.newKeySet()).add(ctx);
+        ChessGame game = gameService.getGame(gameID);
+        gameSessions.computeIfAbsent(gameID, k -> ConcurrentHashMap.newKeySet()).add(ctx);
 
     }
 }
