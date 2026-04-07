@@ -6,6 +6,9 @@ import org.jetbrains.annotations.NotNull;
 import service.GameService;
 import service.UserService;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.util.Map;
@@ -41,7 +44,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             }
         }
         catch (Exception e) {
-            ctx.send("Error: " + e.getMessage());
+            sendError(ctx, "Error: Unauthorized");
         }
     }
 
@@ -59,6 +62,35 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
         ChessGame game = gameService.getGame(gameID);
         gameSessions.computeIfAbsent(gameID, k -> ConcurrentHashMap.newKeySet()).add(ctx);
+        ctx.send(gson.toJson(new LoadGameMessage(game)));
+    }
 
+    private void broadcastToGame(int gameId, String message) {
+        Set<WsContext> sessions = gameSessions.getOrDefault(gameId, ConcurrentHashMap.newKeySet());
+        for (WsContext session : sessions) {
+            sendNotification(session, message);
+        }
+    }
+
+    // sends a message to everyone in the game except the sender
+    private void broadcastToOthers(int gameId, WsContext sender, String message) {
+        Set<WsContext> sessions = gameSessions.getOrDefault(gameId, ConcurrentHashMap.newKeySet());
+        for (WsContext session : sessions) {
+            if(!session.equals(sender)) {
+                sendNotification(session, message);
+            }
+        }
+    }
+
+    private void sendLoadGame(WsContext ctx, ChessGame game) {
+        ctx.send(gson.toJson(new LoadGameMessage(game)));
+    }
+
+    private void sendNotification(WsContext ctx, String notificationMessage) {
+        ctx.send(gson.toJson(new NotificationMessage(notificationMessage)));
+    }
+
+    private void sendError(WsContext ctx, String errorMessage) {
+        ctx.send(gson.toJson(new ErrorMessage(errorMessage)));
     }
 }
