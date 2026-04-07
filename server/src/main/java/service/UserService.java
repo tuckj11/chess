@@ -65,4 +65,12 @@ public class UserService {
         }
     }
 
+    public Boolean verifyAuth(String authToken) {
+        try {
+            AuthData auth = authDao.verifyAuth(authToken);
+            return auth != null;
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

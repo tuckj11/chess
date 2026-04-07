@@ -48,4 +48,15 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     public void handleClose(@NotNull WsCloseContext ctx) {
 
     }
+
+    public void handleConnectCommand(WsContext ctx, UserGameCommand command) {
+        int gameId = command.getGameID();
+        String authToken = command.getAuthToken();
+        if(!userService.verifyAuth(authToken)) {
+            ctx.send("Error: " + "unauthorized");
+            return;
+        }
+        gameSessions.computeIfAbsent(gameId, k -> ConcurrentHashMap.newKeySet()).add(ctx);
+
+    }
 }

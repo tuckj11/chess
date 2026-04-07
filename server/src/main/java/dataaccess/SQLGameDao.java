@@ -37,6 +37,30 @@ public class SQLGameDao implements GameDao{
         }
     }
 
+    public GameData getGame(int gameID) throws DataAccessException {
+        String sql = "SELECT gameID, whiteUsername, blackUsername, gameName, chessGame FROM games WHERE gameID=?";
+
+        try (var conn = DatabaseManager.getConnection()) {
+            var ps = conn.prepareStatement(sql);
+            ps.setInt(1, gameID);
+            var rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String whiteUsername = rs.getString("whiteUsername");
+                String blackUsername = rs.getString("blackUsername");
+                String gameName = rs.getString("gameName");
+                String json = rs.getString("chessGame");
+                ChessGame game = GSON.fromJson(json, ChessGame.class);
+                return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
+            } else {
+                throw new DataAccessException("Game not found");
+            }
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Failed to get game");
+        }
+    }
+
     @Override
     public Integer makeGame(String gameName) throws DataAccessException{
         String sql = "INSERT INTO games (gameName, chessGame) VALUES (?, ?)";

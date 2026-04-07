@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.AuthDao;
 import dataaccess.DataAccessException;
 import dataaccess.GameDao;
@@ -71,6 +72,15 @@ public class GameService {
             }
         }
         catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ChessGame getGame(int gameID) {
+        try {
+            GameData data = gameDao.getGame(gameID);
+            return data.game();
+        } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
     }

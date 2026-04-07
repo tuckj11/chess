@@ -20,6 +20,11 @@ public class MemoryGameDao implements GameDao{
     }
 
     @Override
+    public GameData getGame(int gameID) throws DataAccessException {
+        throw new DataAccessException("Not implemented");
+    }
+
+    @Override
     public Integer makeGame(String gameName) {
         Random rand = new Random();
         int gameID = rand.nextInt(9000) + 1000;
