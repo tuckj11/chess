@@ -119,7 +119,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 return;
             }
             game.game().makeMove(move);
-            sendLoadGame(ctx, game.game());
+            sendLoadGameToAll(gameID, game.game());
             gameService.makeMove(gameID, game.game());
 
             if (move.getPromotionPiece() == null) {
