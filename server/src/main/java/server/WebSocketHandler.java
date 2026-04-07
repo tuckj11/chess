@@ -125,10 +125,12 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             gameService.makeMove(gameID, game.game());
 
             if (move.getPromotionPiece() == null) {
-                broadcastToOthers(gameID, ctx, username + " (" + color + ") " + convertPosToCor(move.getStartPosition()) + " to " + convertPosToCor(move.getEndPosition()));
+                broadcastToOthers(gameID, ctx, username + " (" + color + ") "
+                        + convertPosToCor(move.getStartPosition()) + " to " + convertPosToCor(move.getEndPosition()));
             }
             else {
-                broadcastToOthers(gameID, ctx, username + " (" + color + ") " + convertPosToCor(move.getStartPosition()) + " to " + convertPosToCor(move.getEndPosition()) + " Promotion: " + move.getPromotionPiece());
+                broadcastToOthers(gameID, ctx, username + " (" + color + ") "
+                        + convertPosToCor(move.getStartPosition()) + " to " + convertPosToCor(move.getEndPosition()) + " Promotion: " + move.getPromotionPiece());
             }
 
             if (game.game().isInCheckmate(ChessGame.TeamColor.WHITE)) {

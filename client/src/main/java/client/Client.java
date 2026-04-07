@@ -304,7 +304,8 @@ public class Client {
         System.out.println("Please enter the square of the piece you want to check e.g a3");
         String piece = scan.nextLine();
         int col = convertColToInt(piece.substring(0, 1));
-        int row = (Character.isDigit(piece.charAt(1)) && piece.charAt(1) >= '1' && piece.charAt(1) <= '8') ? Character.getNumericValue(piece.charAt(1)) : -1;
+        int row = (Character.isDigit(piece.charAt(1)) && piece.charAt(1) >= '1' && piece.charAt(1) <= '8')
+                ? Character.getNumericValue(piece.charAt(1)) : -1;
         if (col == -1 || row == -1) {
             System.out.println("Invalid input. Please try again");
             return;

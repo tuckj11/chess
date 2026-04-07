@@ -80,14 +80,16 @@ public class WebSocketClient extends Endpoint {
     public void makeMove(String startPos, String endPos, String promotionPiece) {
         try {
             int startCol = client.convertColToInt(startPos.substring(0, 1));
-            int startRow = (Character.isDigit(startPos.charAt(1)) && startPos.charAt(1) >= '1' && startPos.charAt(1) <= '8') ? Character.getNumericValue(startPos.charAt(1)) : -1;
+            int startRow = (Character.isDigit(startPos.charAt(1)) && startPos.charAt(1) >= '1'
+                    && startPos.charAt(1) <= '8') ? Character.getNumericValue(startPos.charAt(1)) : -1;
             if (startCol == -1 || startRow == -1) {
                 System.out.println("Invalid input. Please try again");
                 return;
             }
 
             int endCol = client.convertColToInt(endPos.substring(0, 1));
-            int endRow = (Character.isDigit(endPos.charAt(1)) && endPos.charAt(1) >= '1' && endPos.charAt(1) <= '8') ? Character.getNumericValue(endPos.charAt(1)) : -1;
+            int endRow = (Character.isDigit(endPos.charAt(1)) && endPos.charAt(1) >= '1' &&
+                    endPos.charAt(1) <= '8') ? Character.getNumericValue(endPos.charAt(1)) : -1;
             if (endCol == -1 || endRow == -1) {
                 System.out.println("Invalid input. Please try again");
                 return;
