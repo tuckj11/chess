@@ -53,7 +53,7 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         Collection<ChessMove> tempMoves;
         ChessPiece piece = board.getPiece(startPosition);
-        if(piece == null) {
+        if (piece == null) {
             return null;
         }
 

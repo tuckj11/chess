@@ -1,9 +1,6 @@
 package client;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import model.GameData;
 import requests.Requests;
 import results.Results;
@@ -11,6 +8,7 @@ import websocket.commands.UserGameCommand;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
 
@@ -267,14 +265,14 @@ public class Client {
             System.out.println("Type Help for more options.");
             String input = scan.nextLine().trim().toLowerCase();
             switch (input) {
-                case "redraw" -> drawBoard(ws.getColor(), ws.getGame());
+                case "redraw" -> drawBoard(ws.getColor(), ws.getGame(), null);
                 case "leave" -> {
                     ws.leave();
                     return;
                 }
                 case "move" -> movePiece();
                 case "resign" -> resign();
-                case "highlight" -> highlight();
+                case "highlight" -> highlight(ws);
                 case "help" -> gameHelp();
                 default -> {
                     System.out.println("Sorry that is an unrecognized command. Please try one of the following");
@@ -282,10 +280,6 @@ public class Client {
                 }
             }
         }
-    }
-
-    private void leaveGame() {
-
     }
 
     private void movePiece() {
@@ -296,8 +290,23 @@ public class Client {
 
     }
 
-    private void highlight() {
-
+    private void highlight(WebSocketClient ws) {
+        System.out.println("Please enter the square of the piece you want to check e.g a3");
+        String piece = scan.nextLine();
+        int col = convertColToInt(piece.substring(0, 1));
+        int row = (Character.isDigit(piece.charAt(1)) && piece.charAt(1) >= '1' && piece.charAt(1) <= '8') ? Character.getNumericValue(piece.charAt(1)) : -1;
+        if (col == -1 || row == -1) {
+            System.out.println("Invalid input. Please try again");
+            return;
+        }
+        ChessPosition pos = new ChessPosition(row, col);
+        ChessGame game = ws.getGame();
+        Collection<ChessMove> possibleMoves = game.validMoves(pos);
+        if (possibleMoves == null) {
+            System.out.println("There is not a piece there. Please try again");
+            return;
+        }
+        drawBoard(ws.getColor(), ws.getGame(), possibleMoves);
     }
 
     private void gameHelp() {
@@ -317,9 +326,9 @@ public class Client {
             System.out.println("Type Help for more options.");
             String input = scan.nextLine().trim().toLowerCase();
             switch (input) {
-                case "redraw" -> drawBoard(ws.getColor(), ws.getGame());
+                case "redraw" -> drawBoard(ws.getColor(), ws.getGame(), null);
                 case "leave" -> {
-                    leaveGame();
+                    ws.leave();
                     return;
                 }
                 case "help" -> observeHelp();
@@ -339,25 +348,24 @@ public class Client {
             help - see possible commands""");
     }
 
-    public void drawBoard(String color, ChessGame game) {
+    public void drawBoard(String color, ChessGame game, Collection<ChessMove> highlights) {
         ChessBoard board = game.getBoard();
         if (color.equals("WHITE")) {
             System.out.println("  a b c d e f g h");
             for (int row = 8; row >= 1; row--) {
-                fillInPieces(board, row, false);
+                fillInPieces(board, row, false, highlights);
             }
             System.out.println("  a b c d e f g h");
-        }
-        else {
+        } else {
             System.out.println("  h g f e d c b a");
             for (int row = 1; row <= 8; row++) {
-                fillInPieces(board, row, true);
+                fillInPieces(board, row, true, highlights);
             }
-            System.out.println(" h g f e d c b a");
+            System.out.println("  h g f e d c b a");
         }
     }
 
-    private void fillInPieces(ChessBoard board, int row, boolean isBlack) {
+    private void fillInPieces(ChessBoard board, int row, boolean isBlack, Collection<ChessMove> highlights) {
         System.out.print(row + " ");
         int colStart = isBlack ? 8 : 1;
         int colEnd = isBlack ? 1 : 8;
@@ -367,10 +375,20 @@ public class Client {
             ChessPosition pos = new ChessPosition(row, col);
             ChessPiece piece = board.getPiece(pos);
 
-            boolean isLight = (row + col) % 2 != 0;
-            String bg = isLight ? "\u001B[47m" : "\u001B[100m";
-            String text = piece == null ? "  " : getPieceSymbol(piece);
+            int currentCol = col;
+            boolean isHighlighted = highlights != null && highlights.stream()
+                    .anyMatch(move -> move.getEndPosition().getRow() == row
+                            && move.getEndPosition().getColumn() == currentCol);
 
+            boolean isLight = (row + col) % 2 != 0;
+            String bg;
+            if (isHighlighted) {
+                bg = isLight ? "\u001B[43m" : "\u001B[33m"; // yellow for highlights
+            } else {
+                bg = isLight ? "\u001B[47m" : "\u001B[100m";
+            }
+
+            String text = piece == null ? "  " : getPieceSymbol(piece);
             System.out.print(bg + text + "\u001B[0m");
         }
         System.out.println(" " + row);
@@ -387,5 +405,19 @@ public class Client {
             case PAWN ->   "P";
         };
         return color + letter + " \u001B[0m";
+    }
+
+    private int convertColToInt(String col) {
+        switch (col) {
+            case "a" -> {return 1;}
+            case "b" -> {return 2;}
+            case "c" -> {return 3;}
+            case "d" -> {return 4;}
+            case "e" -> {return 5;}
+            case "f" -> {return 6;}
+            case "g" -> {return 7;}
+            case "h" -> {return 8;}
+            default -> {return -1;}
+        }
     }
 }
