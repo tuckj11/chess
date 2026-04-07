@@ -136,6 +136,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             if (game.game().isInCheckmate(ChessGame.TeamColor.BLACK)) {
                 broadcastToGame(gameID, game.blackUsername() +" (BLACK) is in Checkmate!");
             }
+
         } catch (Exception e) {
             sendError(ctx, e.getMessage());
         }

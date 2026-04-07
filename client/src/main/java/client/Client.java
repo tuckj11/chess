@@ -412,7 +412,7 @@ public class Client {
         return color + letter + " \u001B[0m";
     }
 
-    private int convertColToInt(String col) {
+    public int convertColToInt(String col) {
         switch (col) {
             case "a" -> {return 1;}
             case "b" -> {return 2;}

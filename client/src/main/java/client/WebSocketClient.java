@@ -1,8 +1,12 @@
 package client;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import jakarta.websocket.*;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
@@ -79,8 +83,47 @@ public class WebSocketClient extends Endpoint {
         }
     }
 
+    public void makeMove(String startPos, String endPos, String promotionPiece) {
+        try {
+            int startCol = client.convertColToInt(startPos.substring(0, 1));
+            int startRow = (Character.isDigit(startPos.charAt(1)) && startPos.charAt(1) >= '1' && startPos.charAt(1) <= '8') ? Character.getNumericValue(startPos.charAt(1)) : -1;
+            if (startCol == -1 || startRow == -1) {
+                System.out.println("Invalid input. Please try again");
+                return;
+            }
+
+            int endCol = client.convertColToInt(endPos.substring(0, 1));
+            int endRow = (Character.isDigit(endPos.charAt(1)) && endPos.charAt(1) >= '1' && endPos.charAt(1) <= '8') ? Character.getNumericValue(endPos.charAt(1)) : -1;
+            if (endCol == -1 || endRow == -1) {
+                System.out.println("Invalid input. Please try again");
+                return;
+            }
+
+            ChessPiece.PieceType promotionPieceType = convertToPieceType(promotionPiece);
+            if(promotionPieceType == null) {
+                System.out.println("Invalid input. Please try again");
+            }
+
+
+            ChessMove move = new ChessMove(new ChessPosition(startRow, startCol), new ChessPosition(endRow, endCol), promotionPieceType);
+            sendCommand(new MakeMoveCommand(move, authToken, gameID));
+        } catch (IOException e) {
+            System.out.println("Lost connection to the server. Please try again");
+        }
+    }
+
     private void sendCommand(UserGameCommand command) throws IOException {
         session.getBasicRemote().sendText(gson.toJson(command));
+    }
+
+    private ChessPiece.PieceType convertToPieceType(String promotionPiece) {
+        switch (promotionPiece) {
+            case "BISHOP" -> {return ChessPiece.PieceType.BISHOP;}
+            case "ROOK" -> {return ChessPiece.PieceType.ROOK;}
+            case "QUEEN" -> {return ChessPiece.PieceType.QUEEN;}
+            case "KNIGHT" -> {return ChessPiece.PieceType.KNIGHT;}
+            default -> {return null;}
+        }
     }
 
     public ChessGame getGame() {
