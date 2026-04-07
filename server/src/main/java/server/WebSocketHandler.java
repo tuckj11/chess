@@ -34,7 +34,6 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     @Override
     public void handleConnect(@NotNull WsConnectContext ctx) {
         ctx.enableAutomaticPings();
-        System.out.println("Client connected");
     }
 
     @Override
@@ -55,7 +54,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     @Override
     public void handleClose(@NotNull WsCloseContext ctx) {
-
+        gameSessions.values().forEach(sessions -> sessions.remove(ctx));
     }
 
     public void handleConnectCommand(WsContext ctx, UserGameCommand command) {
@@ -129,17 +128,17 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 broadcastToOthers(gameID, ctx, username + " (" + color + ") " + convertPosToCor(move.getStartPosition()) + " to " + convertPosToCor(move.getEndPosition()) + " Promotion: " + move.getPromotionPiece());
             }
 
-            if (game.game().isInCheck(ChessGame.TeamColor.WHITE)) {
-                broadcastToGame(gameID, game.whiteUsername() + " (WHITE) is in Check!");
-            }
-            if (game.game().isInCheck(ChessGame.TeamColor.BLACK)) {
-                broadcastToGame(gameID, game.blackUsername() +" (BLACK) is in Check!");
-            }
             if (game.game().isInCheckmate(ChessGame.TeamColor.WHITE)) {
                 broadcastToGame(gameID, game.whiteUsername() + " (WHITE) is in Checkmate!");
             }
+            else if (game.game().isInCheck(ChessGame.TeamColor.WHITE)) {
+                broadcastToGame(gameID, game.whiteUsername() + " (WHITE) is in Check!");
+            }
             if (game.game().isInCheckmate(ChessGame.TeamColor.BLACK)) {
                 broadcastToGame(gameID, game.blackUsername() +" (BLACK) is in Checkmate!");
+            }
+            else if (game.game().isInCheck(ChessGame.TeamColor.BLACK)) {
+                broadcastToGame(gameID, game.blackUsername() +" (BLACK) is in Check!");
             }
 
         } catch (Exception e) {
