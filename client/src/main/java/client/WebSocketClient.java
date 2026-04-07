@@ -102,6 +102,7 @@ public class WebSocketClient extends Endpoint {
             ChessPiece.PieceType promotionPieceType = convertToPieceType(promotionPiece);
             if(promotionPieceType == null) {
                 System.out.println("Invalid input. Please try again");
+                return;
             }
 
 

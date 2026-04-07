@@ -1,9 +1,6 @@
 package server;
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPosition;
+import chess.*;
 import chess.ChessPiece.PieceType;
-import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import io.javalin.websocket.*;
 import model.AuthData;
@@ -110,7 +107,13 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             } else {
                 color = null;
             }
-            ChessGame.TeamColor pieceColor = game.game().getBoard().getPiece(move.getStartPosition()).getTeamColor();
+
+            ChessPiece piece = game.game().getBoard().getPiece(move.getStartPosition());
+            if(piece == null) {
+                sendError(ctx,"There is no piece there!");
+                return;
+            }
+            ChessGame.TeamColor pieceColor = piece.getTeamColor();
             if (color != pieceColor) {
                 sendError(ctx, "That is not a piece of your color!");
                 return;
