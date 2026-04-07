@@ -71,7 +71,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 return;
             }
             GameData game = gameService.getGame(gameID);
-            gameSessions.computeIfAbsent(gameID, k -> ConcurrentHashMap.newKeySet()).add(ctx);
+            gameSessions.computeIfAbsent(gameID, _ -> ConcurrentHashMap.newKeySet()).add(ctx);
             sendLoadGame(ctx, game.game());
 
             String username = auth.username();
