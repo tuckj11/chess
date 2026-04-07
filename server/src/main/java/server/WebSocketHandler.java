@@ -99,6 +99,11 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             String username = auth.username();
             ChessMove move = command.getMove();
 
+            if (game.game().getTeamTurn() == null) {
+                sendError(ctx, "This game is over!");
+                return;
+            }
+
             ChessGame.TeamColor color;
             if (username.equals(game.whiteUsername())) {
                 color = ChessGame.TeamColor.WHITE;
