@@ -40,9 +40,9 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             UserGameCommand command = gson.fromJson(ctx.message(), UserGameCommand.class);
             switch (command.getCommandType()) {
                 case CONNECT -> handleConnectCommand(ctx, command);
-                case MAKE_MOVE -> handleMove(ctx, command);
-                case LEAVE -> handLeave(ctx, command);
-                case RESIGN -> handleResign(ctx, command);
+                //case MAKE_MOVE -> handleMove(ctx, command);
+                //case LEAVE -> handLeave(ctx, command);
+                //case RESIGN -> handleResign(ctx, command);
             }
         }
         catch (Exception e) {
