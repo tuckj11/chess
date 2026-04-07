@@ -7,6 +7,7 @@ import chess.ChessPosition;
 import model.GameData;
 import requests.Requests;
 import results.Results;
+import websocket.commands.UserGameCommand;
 
 
 import java.util.ArrayList;
@@ -199,7 +200,7 @@ public class Client {
             String color = scan.nextLine();
             serverFacade.joinGame(new Requests.JoinRequest(authToken, color, id));
             System.out.println("Successfully joined! Let's take you to the game");
-            WebSocketClient ws = new WebSocketClient(this, color);
+            WebSocketClient ws = new WebSocketClient(this, color, id, authToken);
             gameLoop(ws);
         }
         catch (NumberFormatException e) {
@@ -232,9 +233,10 @@ public class Client {
         String strId = scan.nextLine();
         try {
             int listNumber = Integer.parseInt(strId.trim());
-            ChessGame game = serverFacade.listGames(new Requests.ListRequest(authToken)).games().get(listNumber - 1).game();
+            int id = gameIds.get(listNumber - 1);
             System.out.println("Successfully joined! Let's take you to the game");
-            drawBoard("WHITE", game);
+            WebSocketClient ws = new WebSocketClient(this, "WHITE", id, authToken);
+            observeLoop(ws);
         }
         catch (NumberFormatException e) {
             System.out.println("You did not enter just a number. Please try again!");
@@ -267,13 +269,13 @@ public class Client {
             switch (input) {
                 case "redraw" -> drawBoard(ws.getColor(), ws.getGame());
                 case "leave" -> {
-                    leaveGame();
+                    ws.leave();
                     return;
                 }
-                case "move" -> listGames();
-                case "resign" -> joinGame();
-                case "highlight" -> observeGame();
-                case "help" -> postLoginHelp();
+                case "move" -> movePiece();
+                case "resign" -> resign();
+                case "highlight" -> highlight();
+                case "help" -> gameHelp();
                 default -> {
                     System.out.println("Sorry that is an unrecognized command. Please try one of the following");
                     gameHelp();
@@ -283,10 +285,18 @@ public class Client {
     }
 
     private void leaveGame() {
-        return;
+
     }
 
     private void movePiece() {
+
+    }
+
+    private void resign() {
+
+    }
+
+    private void highlight() {
 
     }
 
@@ -298,6 +308,34 @@ public class Client {
             move - make a move
             resign - resign the current game
             highlight - see possible moves for a given piece
+            help - see possible commands""");
+    }
+
+    private void observeLoop(WebSocketClient ws) {
+        System.out.println("Welcome to the Game!");
+        while(true) {
+            System.out.println("Type Help for more options.");
+            String input = scan.nextLine().trim().toLowerCase();
+            switch (input) {
+                case "redraw" -> drawBoard(ws.getColor(), ws.getGame());
+                case "leave" -> {
+                    leaveGame();
+                    return;
+                }
+                case "help" -> observeHelp();
+                default -> {
+                    System.out.println("Sorry that is an unrecognized command. Please try one of the following");
+                    gameHelp();
+                }
+            }
+        }
+    }
+
+    private void observeHelp() {
+        System.out.println("""
+            Here are your possible commands
+            redraw - redraw the chess board
+            leave - leave the current game
             help - see possible commands""");
     }
 

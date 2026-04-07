@@ -84,6 +84,14 @@ public class GameService {
         }
     }
 
+    public void updateGameColor(int gameID, String color) {
+        try {
+            gameDao.updateColorData(gameID, color);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public Requests.CreateRequest addAuthToCreateRequest(String auth, Requests.CreateRequest r) {
         return new Requests.CreateRequest(auth, r.gameName());
     }

@@ -41,7 +41,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             switch (command.getCommandType()) {
                 case CONNECT -> handleConnectCommand(ctx, command);
                 //case MAKE_MOVE -> handleMove(ctx, command);
-                //case LEAVE -> handLeave(ctx, command);
+                case LEAVE -> handleLeave(ctx, command);
                 //case RESIGN -> handleResign(ctx, command);
             }
         }
@@ -71,13 +71,43 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             String username = auth.username();
             String color;
             if (username.equals(game.whiteUsername())) {
-                color = "white";
+                color = "WHITE";
             } else if (username.equals(game.blackUsername())) {
-                color = "black";
+                color = "BLACK";
             } else {
-                color = "observer";
+                color = "OBSERVER";
             }
             broadcastToOthers(gameID, ctx, username + "joined as " + color);
+        } catch (Exception e) {
+            sendError(ctx, e.getMessage());
+        }
+    }
+
+    public void handleLeave(WsContext ctx, UserGameCommand command) {
+        try {
+            int gameID = command.getGameID();
+            String authToken = command.getAuthToken();
+            AuthData auth = userService.verifyAuth(authToken);
+            if (auth == null) {
+                sendError(ctx, "Error: Unauthorized");
+                return;
+            }
+            gameSessions.getOrDefault(gameID, ConcurrentHashMap.newKeySet()).remove(ctx);
+
+            GameData game = gameService.getGame(gameID);
+            String username = auth.username();
+            String color;
+            if (username.equals(game.whiteUsername())) {
+                color = "WHITE";
+            } else if (username.equals(game.blackUsername())) {
+                color = "BLACK";
+            } else {
+                color = "OBSERVER";
+            }
+            if(color.equals("WHITE") || color.equals("BLACK")) {
+                gameService.updateGameColor(gameID, color);
+            }
+            broadcastToOthers(gameID, ctx, username + "left the game as " + color);
         } catch (Exception e) {
             sendError(ctx, e.getMessage());
         }

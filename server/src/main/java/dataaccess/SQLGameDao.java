@@ -84,6 +84,32 @@ public class SQLGameDao implements GameDao{
     }
 
     @Override
+    public void updateColorData(int gameID, String color) throws DataAccessException {
+        String selectSql = "SELECT gameID, whiteUsername, blackUsername, gameName, chessGame FROM games WHERE gameID=?";
+        String updateSql = "UPDATE games SET whiteUsername = ?, blackUsername = ? WHERE gameID = ?";
+        try (var conn = DatabaseManager.getConnection()) {
+            var selectPs = conn.prepareStatement(selectSql);
+            var updatePs = conn.prepareStatement(updateSql);
+            selectPs.setInt(1, gameID);
+            var rs = selectPs.executeQuery();
+            if (rs.next()) {
+                if (color.equals("WHITE")) {
+                    updatePs.setString(1, null);
+                    updatePs.setString(2, rs.getString("blackUsername"));
+                }
+                else {
+                    updatePs.setString(2, null);
+                    updatePs.setString(1, rs.getString("whiteUsername"));
+                }
+            }
+            updatePs.setInt(3, gameID);
+            updatePs.executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException("failed to leave game");
+        }
+    }
+
+    @Override
     public int connectToGame(String username, Integer gameID, String playerColor) throws DataAccessException {
         String selectSql = "SELECT gameID, whiteUsername, blackUsername, gameName, chessGame FROM games WHERE gameID=?";
         String updateSql = "UPDATE games SET whiteUsername = ?, blackUsername = ? WHERE gameID = ?";

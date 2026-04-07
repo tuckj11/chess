@@ -17,12 +17,17 @@ public class WebSocketClient extends Endpoint {
     public Session session;
     private final Client client;
     private final String color;
+    private int gameID;
+    private String authToken;
     private ChessGame game;
     private final Gson gson = new Gson();
 
-    public WebSocketClient(Client client, String color) {
+    public WebSocketClient(Client client, String color, int gameID, String authToken) {
         this.client = client;
         this.color = color;
+        this.gameID = gameID;
+        this.authToken = authToken;
+
         try {
             URI uri = new URI("ws://localhost:8080" + "/ws");
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
@@ -60,6 +65,18 @@ public class WebSocketClient extends Endpoint {
                 System.out.println(error.getErrorMessage());
             }
         }
+    }
+
+    public void leave() {
+        try {
+            sendCommand(new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID));
+        } catch (IOException e) {
+            System.out.println("Error: lost connection to server please try again");
+        }
+    }
+
+    private void sendCommand(UserGameCommand command) throws IOException {
+        session.getBasicRemote().sendText(gson.toJson(command));
     }
 
     public ChessGame getGame() {

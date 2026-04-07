@@ -59,6 +59,12 @@ public class MemoryGameDao implements GameDao{
     }
 
     @Override
+    public void updateColorData(int gameID, String color) throws DataAccessException {
+        throw new DataAccessException("Not implemented");
+    }
+
+
+    @Override
     public void clear() {
         gamedatabase.clear();
     }
