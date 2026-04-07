@@ -164,6 +164,12 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             }
 
             GameData game = gameService.getGame(gameID);
+
+            if (game.game().getTeamTurn() == null) {
+                sendError(ctx, "This game is over!");
+                return;
+            }
+
             String username = auth.username();
             String color;
             if (username.equals(game.whiteUsername())) {
