@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import jakarta.websocket.*;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URI;
@@ -26,4 +27,6 @@ public class WebSocketClient extends Endpoint {
             }
         });
     }
+
+
 }
