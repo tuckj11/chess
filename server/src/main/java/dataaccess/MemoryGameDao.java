@@ -63,6 +63,11 @@ public class MemoryGameDao implements GameDao{
         throw new DataAccessException("Not implemented");
     }
 
+    @Override
+    public void updateGame(int gameID, ChessGame game) throws DataAccessException {
+        throw new DataAccessException("Not implemented");
+    }
+
 
     @Override
     public void clear() {

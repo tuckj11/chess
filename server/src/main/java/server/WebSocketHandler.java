@@ -120,6 +120,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             }
             game.game().makeMove(move);
             sendLoadGame(ctx, game.game());
+            gameService.makeMove(gameID, game.game());
+
             if (move.getPromotionPiece() == null) {
                 broadcastToOthers(gameID, ctx, username + " (" + color + ") " + convertPosToCor(move.getStartPosition()) + " to " + convertPosToCor(move.getEndPosition()));
             }
