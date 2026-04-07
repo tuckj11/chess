@@ -285,8 +285,6 @@ public class Client {
         }
     }
 
-    private void
-
     private void leaveGame() {
         return;
     }
