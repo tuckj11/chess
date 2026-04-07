@@ -301,7 +301,7 @@ public class Client {
             help - see possible commands""");
     }
 
-    private void drawBoard(String color, ChessGame game) {
+    public void drawBoard(String color, ChessGame game) {
         ChessBoard board = game.getBoard();
         if (color.equals("WHITE")) {
             System.out.println("  a b c d e f g h");

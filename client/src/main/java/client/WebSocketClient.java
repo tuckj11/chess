@@ -49,6 +49,7 @@ public class WebSocketClient extends Endpoint {
             case LOAD_GAME -> {
                 LoadGameMessage loadGame = gson.fromJson(message, LoadGameMessage.class);
                 game = loadGame.getGame();
+                client.drawBoard(color, game);
             }
             case NOTIFICATION -> {
                 NotificationMessage notification = gson.fromJson(message, NotificationMessage.class);
