@@ -271,7 +271,7 @@ public class Client {
                     return;
                 }
                 case "move" -> movePiece(ws);
-                case "resign" -> resign();
+                case "resign" -> resign(ws);
                 case "highlight" -> highlight(ws);
                 case "help" -> gameHelp();
                 default -> {
@@ -293,8 +293,13 @@ public class Client {
         ws.makeMove(startPos, endPos, promotionPiece);
     }
 
-    private void resign() {
-
+    private void resign(WebSocketClient ws) {
+        System.out.println("Are you sure you want to resign? Type YES if so.");
+        String confirm = scan.nextLine();
+        if(confirm.equals("YES")) {
+            ws.resign();
+        }
+        System.out.println("You did not resign!");
     }
 
     private void highlight(WebSocketClient ws) {

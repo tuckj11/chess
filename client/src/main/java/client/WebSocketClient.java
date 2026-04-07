@@ -21,8 +21,8 @@ public class WebSocketClient extends Endpoint {
     public Session session;
     private final Client client;
     private final String color;
-    private int gameID;
-    private String authToken;
+    private final int gameID;
+    private final String authToken;
     private ChessGame game;
     private final Gson gson = new Gson();
 
@@ -109,6 +109,14 @@ public class WebSocketClient extends Endpoint {
             sendCommand(new MakeMoveCommand(move, authToken, gameID));
         } catch (IOException e) {
             System.out.println("Lost connection to the server. Please try again");
+        }
+    }
+
+    public void resign() {
+        try {
+            sendCommand(new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID));
+        } catch (IOException e) {
+            System.out.println("Error: lost connection to server please try again");
         }
     }
 
