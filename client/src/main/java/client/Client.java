@@ -261,8 +261,8 @@ public class Client {
 
     private void gameLoop(WebSocketClient ws) {
         System.out.println("Welcome to the Game!");
+        System.out.println("Type Help for more options.");
         while(true) {
-            System.out.println("Type Help for more options.");
             String input = scan.nextLine().trim().toLowerCase();
             switch (input) {
                 case "redraw" -> drawBoard(ws.getColor(), ws.getGame(), null, null);
