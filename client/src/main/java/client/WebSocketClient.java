@@ -29,15 +29,20 @@ public class WebSocketClient extends Endpoint {
         this.authToken = authToken;
 
         try {
+            System.out.println("here1");
             URI uri = new URI("ws://localhost:8080" + "/ws");
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             session = container.connectToServer(this, uri);
+            System.out.println("here2");
 
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 public void onMessage(String message) {
                     handleMessage(message);
                 }
             });
+
+            sendCommand(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID));
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -54,7 +59,7 @@ public class WebSocketClient extends Endpoint {
             case LOAD_GAME -> {
                 LoadGameMessage loadGame = gson.fromJson(message, LoadGameMessage.class);
                 game = loadGame.getGame();
-                client.drawBoard(color, game, null);
+                client.drawBoard(color, game, null, null);
             }
             case NOTIFICATION -> {
                 NotificationMessage notification = gson.fromJson(message, NotificationMessage.class);

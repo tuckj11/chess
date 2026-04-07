@@ -265,7 +265,7 @@ public class Client {
             System.out.println("Type Help for more options.");
             String input = scan.nextLine().trim().toLowerCase();
             switch (input) {
-                case "redraw" -> drawBoard(ws.getColor(), ws.getGame(), null);
+                case "redraw" -> drawBoard(ws.getColor(), ws.getGame(), null, null);
                 case "leave" -> {
                     ws.leave();
                     return;
@@ -306,7 +306,7 @@ public class Client {
             System.out.println("There is not a piece there. Please try again");
             return;
         }
-        drawBoard(ws.getColor(), ws.getGame(), possibleMoves);
+        drawBoard(ws.getColor(), ws.getGame(), possibleMoves, pos);
     }
 
     private void gameHelp() {
@@ -326,7 +326,7 @@ public class Client {
             System.out.println("Type Help for more options.");
             String input = scan.nextLine().trim().toLowerCase();
             switch (input) {
-                case "redraw" -> drawBoard(ws.getColor(), ws.getGame(), null);
+                case "redraw" -> drawBoard(ws.getColor(), ws.getGame(), null, null);
                 case "leave" -> {
                     ws.leave();
                     return;
@@ -348,24 +348,24 @@ public class Client {
             help - see possible commands""");
     }
 
-    public void drawBoard(String color, ChessGame game, Collection<ChessMove> highlights) {
+    public void drawBoard(String color, ChessGame game, Collection<ChessMove> highlights, ChessPosition current) {
         ChessBoard board = game.getBoard();
         if (color.equals("WHITE")) {
             System.out.println("  a b c d e f g h");
             for (int row = 8; row >= 1; row--) {
-                fillInPieces(board, row, false, highlights);
+                fillInPieces(board, row, false, highlights, current);
             }
             System.out.println("  a b c d e f g h");
         } else {
             System.out.println("  h g f e d c b a");
             for (int row = 1; row <= 8; row++) {
-                fillInPieces(board, row, true, highlights);
+                fillInPieces(board, row, true, highlights, current);
             }
             System.out.println("  h g f e d c b a");
         }
     }
 
-    private void fillInPieces(ChessBoard board, int row, boolean isBlack, Collection<ChessMove> highlights) {
+    private void fillInPieces(ChessBoard board, int row, boolean isBlack, Collection<ChessMove> highlights, ChessPosition current) {
         System.out.print(row + " ");
         int colStart = isBlack ? 8 : 1;
         int colEnd = isBlack ? 1 : 8;
@@ -380,11 +380,16 @@ public class Client {
                     .anyMatch(move -> move.getEndPosition().getRow() == row
                             && move.getEndPosition().getColumn() == currentCol);
 
+            boolean isCurrent = current != null && current.getColumn() == col && current.getRow() == row;
+
             boolean isLight = (row + col) % 2 != 0;
             String bg;
             if (isHighlighted) {
-                bg = isLight ? "\u001B[43m" : "\u001B[33m"; // yellow for highlights
-            } else {
+                bg = isLight ? "\u001B[102m" : "\u001B[42m";
+            }
+            else if (isCurrent) {
+                bg = isLight ? "\u001B[101m" : "\u001B[41m";
+            }else {
                 bg = isLight ? "\u001B[47m" : "\u001B[100m";
             }
 

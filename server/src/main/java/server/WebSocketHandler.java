@@ -32,6 +32,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     @Override
     public void handleConnect(@NotNull WsConnectContext ctx) {
         ctx.enableAutomaticPings();
+        System.out.println("Client connected");
     }
 
     @Override
@@ -66,6 +67,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             }
             GameData game = gameService.getGame(gameID);
             gameSessions.computeIfAbsent(gameID, k -> ConcurrentHashMap.newKeySet()).add(ctx);
+            System.out.println("here");
             sendLoadGame(ctx, game.game());
 
             String username = auth.username();
@@ -77,7 +79,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             } else {
                 color = "OBSERVER";
             }
-            broadcastToOthers(gameID, ctx, username + "joined as " + color);
+            broadcastToOthers(gameID, ctx, username + " joined as " + color);
         } catch (Exception e) {
             sendError(ctx, e.getMessage());
         }
@@ -107,7 +109,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             if(color.equals("WHITE") || color.equals("BLACK")) {
                 gameService.updateGameColor(gameID, color);
             }
-            broadcastToOthers(gameID, ctx, username + "left the game as " + color);
+            broadcastToOthers(gameID, ctx, username + " left the game as " + color);
         } catch (Exception e) {
             sendError(ctx, e.getMessage());
         }
