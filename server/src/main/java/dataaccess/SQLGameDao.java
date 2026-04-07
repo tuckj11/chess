@@ -2,7 +2,6 @@ package dataaccess;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import model.GameData;
 
 import java.sql.ResultSet;
@@ -11,7 +10,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class SQLGameDao implements GameDao{
-    private static final Gson GSON = new GsonBuilder().serializeNulls().create();
+    private static final Gson GSON = new Gson();
 
     @Override
     public ArrayList<GameData> getGames() throws DataAccessException {

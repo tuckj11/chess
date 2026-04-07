@@ -96,7 +96,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             String username = auth.username();
             ChessMove move = command.getMove();
 
-            if (game.game().getTeamTurn() == null) {
+            if (game.game().getResigned()) {
                 sendError(ctx, "This game is over!");
                 return;
             }
@@ -165,7 +165,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
             GameData game = gameService.getGame(gameID);
 
-            if (game.game().getTeamTurn() == null) {
+            if (game.game().getResigned()) {
                 sendError(ctx, "This game is over!");
                 return;
             }

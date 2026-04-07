@@ -13,10 +13,12 @@ import java.util.Objects;
 public class ChessGame {
     TeamColor turn;
     ChessBoard board;
+    Boolean resigned;
     public ChessGame() {
         board = new ChessBoard();
         board.resetBoard();
         turn = TeamColor.WHITE;
+        resigned = false;
     }
 
     /**
@@ -111,6 +113,11 @@ public class ChessGame {
 
     public void resign() {
         this.turn = null;
+        this.resigned = true;
+    }
+
+    public Boolean getResigned() {
+        return resigned;
     }
 
     /**
