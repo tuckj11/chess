@@ -40,6 +40,13 @@ public class Server {
         createGame(gson, gameService);
         joinGame(gson, gameService);
         clear(gson, clearService);
+
+        WebSocketHandler webSocketHandler = new WebSocketHandler(userService, gameService);
+        javalin.ws("/ws", ws -> {
+            ws.onConnect(webSocketHandler);
+            ws.onMessage(webSocketHandler);
+            ws.onClose(webSocketHandler);
+        });
     }
 
     private void register(Gson gson, UserService userService) {
