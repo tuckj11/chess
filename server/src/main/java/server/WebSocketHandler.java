@@ -185,13 +185,19 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
     }
 
-    // sends a message to everyone in the game except the sender
     private void broadcastToOthers(int gameId, WsContext sender, String message) {
         Set<WsContext> sessions = gameSessions.getOrDefault(gameId, ConcurrentHashMap.newKeySet());
         for (WsContext session : sessions) {
             if(!session.equals(sender)) {
                 sendNotification(session, message);
             }
+        }
+    }
+
+    private void sendLoadGameToAll(int gameID, ChessGame game) {
+        Set<WsContext> sessions = gameSessions.getOrDefault(gameID, ConcurrentHashMap.newKeySet());
+        for (WsContext session : sessions) {
+            sendLoadGame(session, game);
         }
     }
 
