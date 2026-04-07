@@ -12,7 +12,6 @@ import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URI;
@@ -37,11 +36,7 @@ public class WebSocketClient extends Endpoint {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             session = container.connectToServer(this, uri);
 
-            this.session.addMessageHandler(new MessageHandler.Whole<String>() {
-                public void onMessage(String message) {
-                    handleMessage(message);
-                }
-            });
+            this.session.addMessageHandler((MessageHandler.Whole<String>) this::handleMessage);
 
             sendCommand(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID));
 
@@ -99,11 +94,6 @@ public class WebSocketClient extends Endpoint {
             }
 
             ChessPiece.PieceType promotionPieceType = convertToPieceType(promotionPiece);
-            //if(promotionPieceType == null) {
-            //    System.out.println("Invalid input. Please try again");
-            //    return;
-            //}
-
 
             ChessMove move = new ChessMove(new ChessPosition(startRow, startCol), new ChessPosition(endRow, endCol), promotionPieceType);
             sendCommand(new MakeMoveCommand(move, authToken, gameID));

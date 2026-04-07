@@ -4,8 +4,6 @@ import chess.*;
 import model.GameData;
 import requests.Requests;
 import results.Results;
-import websocket.commands.UserGameCommand;
-
 
 import java.util.ArrayList;
 import java.util.Collection;
