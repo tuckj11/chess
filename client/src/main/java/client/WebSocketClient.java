@@ -33,7 +33,6 @@ public class WebSocketClient extends Endpoint {
             URI uri = new URI("ws://localhost:8080" + "/ws");
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             session = container.connectToServer(this, uri);
-            System.out.println("here2");
 
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 public void onMessage(String message) {

@@ -1,6 +1,8 @@
 package server;
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPosition;
+import chess.ChessPiece.PieceType;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import io.javalin.websocket.*;
@@ -115,8 +117,25 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             }
             game.game().makeMove(move);
             sendLoadGame(ctx, game.game());
-            //broadcastToOthers(gameID, ctx, );
+            if (move.getPromotionPiece() == null) {
+                broadcastToOthers(gameID, ctx, username + " (" + color + ") " + convertPosToCor(move.getStartPosition()) + " to " + convertPosToCor(move.getEndPosition()));
+            }
+            else {
+                broadcastToOthers(gameID, ctx, username + " (" + color + ") " + convertPosToCor(move.getStartPosition()) + " to " + convertPosToCor(move.getEndPosition()) + " Promotion: " + move.getPromotionPiece());
+            }
 
+            if (game.game().isInCheck(ChessGame.TeamColor.WHITE)) {
+                broadcastToGame(gameID, game.whiteUsername() + " (WHITE) is in Check!");
+            }
+            if (game.game().isInCheck(ChessGame.TeamColor.BLACK)) {
+                broadcastToGame(gameID, game.blackUsername() +" (BLACK) is in Check!");
+            }
+            if (game.game().isInCheckmate(ChessGame.TeamColor.WHITE)) {
+                broadcastToGame(gameID, game.whiteUsername() + " (WHITE) is in Checkmate!");
+            }
+            if (game.game().isInCheckmate(ChessGame.TeamColor.BLACK)) {
+                broadcastToGame(gameID, game.blackUsername() +" (BLACK) is in Checkmate!");
+            }
         } catch (Exception e) {
             sendError(ctx, e.getMessage());
         }
@@ -180,5 +199,20 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     private void sendError(WsContext ctx, String errorMessage) {
         ctx.send(gson.toJson(new ErrorMessage(errorMessage)));
+    }
+
+    private String convertPosToCor(ChessPosition pos) {
+        String let = switch (pos.getColumn()) {
+            case 1 -> "a";
+            case 2 -> "b";
+            case 3 -> "c";
+            case 4 -> "d";
+            case 5 -> "e";
+            case 6 -> "f";
+            case 7 -> "g";
+            case 8 -> "h";
+            default -> "z";
+        };
+        return let + pos.getRow();
     }
 }
