@@ -4,6 +4,9 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import jakarta.websocket.*;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,21 +15,57 @@ import java.net.URI;
 
 public class WebSocketClient extends Endpoint {
     public Session session;
+    private final Client client;
+    private final String color;
     private ChessGame game;
     private final Gson gson = new Gson();
 
-    public WebSocketClient() {
-        URI uri = new URI("http://localhost:8080" + "/ws");
-        WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-        session = container.connectToServer(this, uri);
+    public WebSocketClient(Client client, String color) {
+        this.client = client;
+        this.color = color;
+        try {
+            URI uri = new URI("ws://localhost:8080" + "/ws");
+            WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+            session = container.connectToServer(this, uri);
 
-        this.session.addMessageHandler(new MessageHandler.Whole<String>() {
-            public void onMessage(String message) {
-                ServerMessage serverMessage = gson.fromJson(message, ServerMessage.class);
-                handleMessage(serverMessage);
-            }
-        });
+            this.session.addMessageHandler(new MessageHandler.Whole<String>() {
+                public void onMessage(String message) {
+                    handleMessage(message);
+                }
+            });
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
+    @Override
+    public void onOpen(Session session, EndpointConfig endpointConfig) {
 
+    }
+
+    private void handleMessage(String message) {
+        ServerMessage base = gson.fromJson(message, ServerMessage.class);
+        switch (base.getServerMessageType()) {
+            case LOAD_GAME -> {
+                LoadGameMessage loadGame = gson.fromJson(message, LoadGameMessage.class);
+                game = loadGame.getGame();
+            }
+            case NOTIFICATION -> {
+                NotificationMessage notification = gson.fromJson(message, NotificationMessage.class);
+                System.out.println(notification.getMessage());
+            }
+            case ERROR -> {
+                ErrorMessage error = gson.fromJson(message, ErrorMessage.class);
+                System.out.println(error.getErrorMessage());
+            }
+        }
+    }
+
+    public ChessGame getGame() {
+        return game;
+    }
+
+    public String getColor() {
+        return color;
+    }
 }

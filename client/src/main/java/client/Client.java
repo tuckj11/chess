@@ -18,12 +18,10 @@ public class Client {
     private final Scanner scan;
     private String authToken;
     private final List<Integer> gameIds = new ArrayList<>();
-    private final ChessGame game;
 
     public Client() {
         serverFacade = new ServerFacade("http://localhost:8080");
         scan = new Scanner(System.in);
-        game = null;
     }
 
     public void run() {
@@ -200,10 +198,9 @@ public class Client {
             System.out.println("What color did you want to play as? Please type either BLACK or WHITE!");
             String color = scan.nextLine();
             serverFacade.joinGame(new Requests.JoinRequest(authToken, color, id));
-            ChessGame game = serverFacade.listGames(new Requests.ListRequest(authToken)).games().get(listNumber - 1).game();
             System.out.println("Successfully joined! Let's take you to the game");
-            drawBoard(color, serverFacade.listGames(new Requests.ListRequest(authToken)).games().get(listNumber - 1).game());
-            gameLoop(color);
+            WebSocketClient ws = new WebSocketClient(this, color);
+            gameLoop(ws);
         }
         catch (NumberFormatException e) {
             System.out.println("You did not enter just a number. Please try again!");
@@ -262,13 +259,13 @@ public class Client {
             help - see possible commands""");
     }
 
-    private void gameLoop(String color) {
+    private void gameLoop(WebSocketClient ws) {
         System.out.println("Welcome to the Game!");
         while(true) {
             System.out.println("Type Help for more options.");
             String input = scan.nextLine().trim().toLowerCase();
             switch (input) {
-                case "redraw" -> drawBoard(color, game);
+                case "redraw" -> drawBoard(ws.getColor(), ws.getGame());
                 case "leave" -> {
                     leaveGame();
                     return;
