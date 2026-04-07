@@ -1,5 +1,7 @@
 package server;
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import io.javalin.websocket.*;
 import model.AuthData;
@@ -7,6 +9,7 @@ import model.GameData;
 import org.jetbrains.annotations.NotNull;
 import service.GameService;
 import service.UserService;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
@@ -41,7 +44,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             UserGameCommand command = gson.fromJson(ctx.message(), UserGameCommand.class);
             switch (command.getCommandType()) {
                 case CONNECT -> handleConnectCommand(ctx, command);
-                //case MAKE_MOVE -> handleMove(ctx, command);
+                case MAKE_MOVE -> handleMove(ctx, gson.fromJson(ctx.message(), MakeMoveCommand.class));
                 case LEAVE -> handleLeave(ctx, command);
                 //case RESIGN -> handleResign(ctx, command);
             }
@@ -67,7 +70,6 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             }
             GameData game = gameService.getGame(gameID);
             gameSessions.computeIfAbsent(gameID, k -> ConcurrentHashMap.newKeySet()).add(ctx);
-            System.out.println("here");
             sendLoadGame(ctx, game.game());
 
             String username = auth.username();
@@ -83,6 +85,42 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         } catch (Exception e) {
             sendError(ctx, e.getMessage());
         }
+    }
+
+    public void handleMove(WsContext ctx, MakeMoveCommand command) {
+        try {
+            int gameID = command.getGameID();
+            String authToken = command.getAuthToken();
+            AuthData auth = userService.verifyAuth(authToken);
+            if (auth == null) {
+                sendError(ctx, "Error: Unauthorized");
+                return;
+            }
+            GameData game = gameService.getGame(gameID);
+            String username = auth.username();
+            ChessMove move = command.getMove();
+
+            ChessGame.TeamColor color;
+            if (username.equals(game.whiteUsername())) {
+                color = ChessGame.TeamColor.WHITE;
+            } else if (username.equals(game.blackUsername())) {
+                color = ChessGame.TeamColor.BLACK;
+            } else {
+                color = null;
+            }
+            ChessGame.TeamColor pieceColor = game.game().getBoard().getPiece(move.getStartPosition()).getTeamColor();
+            if (color != pieceColor) {
+                sendError(ctx, "That is not a piece of your color!");
+                return;
+            }
+            game.game().makeMove(move);
+            sendLoadGame(ctx, game.game());
+            //broadcastToOthers(gameID, ctx, );
+
+        } catch (Exception e) {
+            sendError(ctx, e.getMessage());
+        }
+
     }
 
     public void handleLeave(WsContext ctx, UserGameCommand command) {
