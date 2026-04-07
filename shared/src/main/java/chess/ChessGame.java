@@ -114,7 +114,7 @@ public class ChessGame {
     }
 
     public void resign() {
-        turn = null;
+        this.turn = null;
     }
 
     /**

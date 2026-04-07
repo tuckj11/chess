@@ -168,17 +168,16 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             String color;
             if (username.equals(game.whiteUsername())) {
                 color = "WHITE";
-                game.game().resign();
             } else if (username.equals(game.blackUsername())){
                 color = "BLACK";
-                game.game().resign();
             }
             else {
                 sendError(ctx, "You are not a player!");
                 return;
             }
-
+            game.game().resign();
             gameService.makeMove(gameID, game.game());
+
             broadcastToGame(gameID, username + " (" + color + ") resigned!");
         } catch (Exception e) {
             sendError(ctx, e.getMessage());
