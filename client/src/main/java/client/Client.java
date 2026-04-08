@@ -296,6 +296,7 @@ public class Client {
         String confirm = scan.nextLine();
         if(confirm.equals("YES")) {
             ws.resign();
+            return;
         }
         System.out.println("You did not resign!");
     }
@@ -346,7 +347,7 @@ public class Client {
                 case "help" -> observeHelp();
                 default -> {
                     System.out.println("Sorry that is an unrecognized command. Please try one of the following");
-                    gameHelp();
+                    observeHelp();
                 }
             }
         }
