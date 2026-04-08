@@ -32,6 +32,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     @Override
     public void handleConnect(@NotNull WsConnectContext ctx) {
         ctx.enableAutomaticPings();
+        System.out.println("client connected");
     }
 
     @Override

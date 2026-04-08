@@ -36,7 +36,11 @@ public class WebSocketClient extends Endpoint {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             session = container.connectToServer(this, uri);
 
-            this.session.addMessageHandler((MessageHandler.Whole<String>) this::handleMessage);
+            session.addMessageHandler(new MessageHandler.Whole<String>() {
+                public void onMessage(String message) {
+                    handleMessage(message);
+                }
+            });
 
             sendCommand(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID));
 
@@ -48,6 +52,10 @@ public class WebSocketClient extends Endpoint {
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
 
+    }
+
+    @Override
+    public void onClose(Session session, CloseReason reason) {
     }
 
     private void handleMessage(String message) {
